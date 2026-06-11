@@ -1,0 +1,16 @@
+{
+  "runs": [
+    {
+      "mode": "incremental",
+      "started_at": "2026-06-11T22:52:40Z",
+      "finished_at": "2026-06-11T22:58:57Z",
+      "duration_seconds": 376,
+      "camara_count": 126,
+      "senado_count": 11,
+      "total_count": 137,
+      "errors": [],
+      "status": "success"
+    }
+  ],
+  "generated_at": "2026-06-11T22:58:57Z"
+}
