@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de Ingestão L.I.L.A.S</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #7c3aed;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --blue: #58a6ff;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .card h2 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; }
+    canvas { max-height: 220px; }
+
+    /* Rankings / Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { color: var(--muted); font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    
+    .status-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .status-success { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.4); }
+    .status-error { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.4); }
+
+    /* Empty state */
+    .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 24px 0; }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+    <div>
+      <h1 class="text-xl font-semibold tracking-tight">
+        Relatório de Ingestão <span style="color: var(--accent)">L.I.L.A.S</span>
+      </h1>
+      <p id="meta-repo" class="text-sm mt-1" style="color: var(--muted)">Pipeline Diária (GitHub Actions)</p>
+    </div>
+    <div class="text-right text-xs" style="color: var(--muted)">
+      Atualizado em<br><strong id="meta-time" class="text-white">—</strong>
+    </div>
+  </header>
+
+  <!-- Loading / Error state -->
+  <div id="loading" class="empty">Carregando métricas...</div>
+  <div id="error" class="empty" style="display:none; color: var(--red)"></div>
+
+  <!-- Dashboard (hidden until data loads) -->
+  <div id="dashboard" style="display:none">
+
+    <!-- Row 1: Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div class="card text-center">
+        <h2>Status da Última Execução</h2>
+        <div id="summary-status" class="text-2xl font-bold mt-2">—</div>
+      </div>
+      <div class="card text-center">
+        <h2>Modo</h2>
+        <div id="summary-mode" class="text-2xl font-bold mt-2 text-white">—</div>
+      </div>
+      <div class="card text-center">
+        <h2>Total Ingerido</h2>
+        <div id="summary-total" class="text-3xl font-bold mt-2" style="color: var(--accent)">—</div>
+      </div>
+      <div class="card text-center">
+        <h2>Duração</h2>
+        <div id="summary-duration" class="text-2xl font-bold mt-2 text-white">—</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="card">
+        <h2>PLs Ingeridos por Dia (Últimos 14 ciclos)</h2>
+        <canvas id="chart-pls-line"></canvas>
+      </div>
+      <div class="card">
+        <h2>Duração da Execução (segundos)</h2>
+        <canvas id="chart-duration"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 3: History Table -->
+    <div class="card mb-4">
+      <h2>Histórico Recente de Execuções</h2>
+      <div class="overflow-x-auto">
+        <table id="table-history">
+          <thead>
+            <tr>
+              <th>Data/Hora (UTC)</th>
+              <th>Modo</th>
+              <th class="text-right">Câmara</th>
+              <th class="text-right">Senado</th>
+              <th class="text-right">Total</th>
+              <th class="text-right">Duração (s)</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /dashboard -->
+
+  <footer class="mt-10 text-center text-xs" style="color: var(--border)">
+    Dados coletados via GitHub Actions · JSON servido estaticamente
+  </footer>
+
+<script>
+Chart.defaults.color = "#8b949e";
+Chart.defaults.borderColor = "#30363d";
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+
+const TOOLTIP = {
+  backgroundColor: "#161b22",
+  borderColor: "#30363d",
+  borderWidth: 1,
+  titleColor: "#e6edf3",
+  bodyColor: "#8b949e",
+  padding: 10,
+};
+
+function formatDate(isoStr) {
+  if (!isoStr) return "—";
+  return new Date(isoStr).toLocaleString("pt-BR");
+}
+
+function buildCharts(runs) {
+  // Pegamos os ultimos 14 runs e invertemos para a ordem cronológica
+  const recentRuns = runs.slice(0, 14).reverse();
+  const labels = recentRuns.map(r => new Date(r.started_at).toLocaleDateString("pt-BR", {day: '2-digit', month: '2-digit'}));
+
+  new Chart(document.getElementById("chart-pls-line"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        { label: "Câmara", data: recentRuns.map(r => r.camara_count || 0), borderColor: "#58a6ff", backgroundColor: "rgba(88,166,255,0.12)", tension: 0.35, fill: true, pointRadius: 3 },
+        { label: "Senado", data: recentRuns.map(r => r.senado_count || 0), borderColor: "#3fb950", backgroundColor: "rgba(63,185,80,0.12)", tension: 0.35, fill: true, pointRadius: 3 },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: "bottom" }, tooltip: { ...TOOLTIP, mode: "index", intersect: false } }, scales: { y: { beginAtZero: true } } },
+  });
+
+  new Chart(document.getElementById("chart-duration"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{ label: "Segundos", data: recentRuns.map(r => r.duration_seconds || 0), backgroundColor: "rgba(124,58,237,0.7)", borderRadius: 3 }],
+    },
+    options: { responsive: true, plugins: { legend: { display: false }, tooltip: { ...TOOLTIP } }, scales: { y: { beginAtZero: true } } },
+  });
+}
+
+function buildTable(runs) {
+  const tbody = document.querySelector("#table-history tbody");
+  runs.forEach(run => {
+    const tr = document.createElement("tr");
+    
+    let statusHtml = "";
+    if (run.status === "success") {
+      statusHtml = '<span class="status-badge status-success">Sucesso</span>';
+    } else {
+      statusHtml = '<span class="status-badge status-error" title="' + (run.errors ? run.errors.join(", ") : "Erro") + '">Falha</span>';
+    }
+
+    tr.innerHTML = `
+      <td>${formatDate(run.started_at)}</td>
+      <td class="uppercase text-xs tracking-wider">${run.mode}</td>
+      <td class="text-right">${run.camara_count || 0}</td>
+      <td class="text-right">${run.senado_count || 0}</td>
+      <td class="text-right font-medium">${run.total_count || 0}</td>
+      <td class="text-right">${run.duration_seconds || 0}</td>
+      <td class="text-center">${statusHtml}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function init() {
+  try {
+    const res = await fetch("./ingestion-history.json");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+
+    document.getElementById("meta-time").textContent = data.generated_at ? formatDate(data.generated_at) : "—";
+
+    const runs = data.runs || [];
+    if (runs.length > 0) {
+      const lastRun = runs[0];
+      
+      const statusEl = document.getElementById("summary-status");
+      if (lastRun.status === "success") {
+        statusEl.textContent = "✅ Sucesso";
+        statusEl.style.color = "var(--green)";
+      } else {
+        statusEl.textContent = "❌ Falha";
+        statusEl.style.color = "var(--red)";
+      }
+      
+      document.getElementById("summary-mode").textContent = (lastRun.mode || "—").toUpperCase();
+      document.getElementById("summary-total").textContent = lastRun.total_count || "0";
+      
+      const dur = lastRun.duration_seconds;
+      document.getElementById("summary-duration").textContent = dur ? (dur >= 60 ? Math.floor(dur/60) + "m " + (dur%60) + "s" : dur + "s") : "—";
+      
+      buildCharts(runs);
+      buildTable(runs);
+    }
+  } catch (err) {
+    document.getElementById("loading").style.display = "none";
+    const el = document.getElementById("error");
+    el.style.display = "block";
+    el.textContent = `Falha ao carregar ingestion-history.json: ${err.message}.`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

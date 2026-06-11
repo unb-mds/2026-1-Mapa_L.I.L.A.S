@@ -84,3 +84,6 @@ nav:
 
   - Métricas de Produtividade:
       - Dashboard: scrum/index.html
+
+  - Relatório de Ingestão:
+      - Dashboard: ingestion/index.html

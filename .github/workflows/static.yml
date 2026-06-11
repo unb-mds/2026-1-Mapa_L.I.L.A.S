@@ -38,14 +38,18 @@ jobs:
       # Inclui o dashboard de métricas SCRUM no site gerado.
       # O MkDocs não copia pastas fora do seu escopo — fazemos isso manualmente.
       # Resultado: Pages serve o dashboard em <url-base>/scrum/
-      - name: Incluir métricas SCRUM no site
+      - name: Incluir dashboards no site
         run: |
           if [ -d "docs/scrum" ]; then
             cp -r docs/scrum site/scrum
           else
             echo "docs/scrum não encontrada — pulando."
           fi
-        
+          if [ -d "docs/ingestion" ]; then
+            cp -r docs/ingestion site/ingestion
+          else
+            echo "docs/ingestion não encontrada — pulando."
+          fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
