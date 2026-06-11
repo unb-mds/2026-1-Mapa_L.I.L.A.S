@@ -1,0 +1,54 @@
+name: Ingestão de Dados Diária
+
+on:
+  schedule:
+    - cron: '33 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ingestion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run data ingestion (Incremental)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd backend
+          python popular_banco.py --mode incremental
+
+      - name: Merge report into history
+        run: |
+          cd backend
+          PYTHONPATH=.. python ../scripts/merge_reports.py --report ingestion-report.json --history ../docs/ingestion/ingestion-history.json
+
+      - name: Commit and push updated history
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/ingestion/ingestion-history.json
+          git commit -m "chore: atualiza histórico de ingestão [skip ci]" || echo "Nenhuma mudança no histórico"
+          git push
+
+      - name: Upload execution report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingestion-report
+          path: backend/ingestion-report.json
+          retention-days: 90

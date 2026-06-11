@@ -130,30 +130,31 @@ def coletar_senado(
 # ---------------------------------------------------------------------------
 # Coleta incremental e Agendador
 # ---------------------------------------------------------------------------
+# DESATIVADO — ingestão movida para GitHub Actions (data-ingestion.yml)
 
-def executar_ciclo_incremental(session: Session) -> None:
-    logger.info("Iniciando ciclo incremental — %s", date.today())
-    try:
-        coletar_camara(session)
-    except Exception as exc:
-        logger.warning("Falha no ciclo incremental da Câmara: %s", exc)
-    try:
-        coletar_senado(session, numdias=1)
-    except Exception as exc:
-        logger.warning("Falha no ciclo incremental do Senado: %s", exc)
-
-async def loop_coleta(get_session_func) -> None:
-    while True:
-        await asyncio.sleep(INTERVALO_HORAS * 3600)
-        logger.info("Agendador: disparando ciclo incremental.")
-        try:
-            await asyncio.to_thread(_ciclo_incremental_thread, get_session_func)
-        except Exception as exc:
-            logger.warning("Agendador: ciclo incremental falhou: %s", exc)
-
-def _ciclo_incremental_thread(get_session_func) -> None:
-    session: Session = next(get_session_func())
-    try:
-        executar_ciclo_incremental(session)
-    finally:
-        session.close()
+# def executar_ciclo_incremental(session: Session) -> None:
+#     logger.info("Iniciando ciclo incremental — %s", date.today())
+#     try:
+#         coletar_camara(session)
+#     except Exception as exc:
+#         logger.warning("Falha no ciclo incremental da Câmara: %s", exc)
+#     try:
+#         coletar_senado(session, numdias=1)
+#     except Exception as exc:
+#         logger.warning("Falha no ciclo incremental do Senado: %s", exc)
+# 
+# async def loop_coleta(get_session_func) -> None:
+#     while True:
+#         await asyncio.sleep(INTERVALO_HORAS * 3600)
+#         logger.info("Agendador: disparando ciclo incremental.")
+#         try:
+#             await asyncio.to_thread(_ciclo_incremental_thread, get_session_func)
+#         except Exception as exc:
+#             logger.warning("Agendador: ciclo incremental falhou: %s", exc)
+# 
+# def _ciclo_incremental_thread(get_session_func) -> None:
+#     session: Session = next(get_session_func())
+#     try:
+#         executar_ciclo_incremental(session)
+#     finally:
+#         session.close()
