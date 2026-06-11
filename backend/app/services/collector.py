@@ -30,12 +30,12 @@ INTERVALO_HORAS = 2
 # Câmara
 # ---------------------------------------------------------------------------
 
-def coletar_camara(session: Session, ano_inicial: Optional[int] = None) -> int:
+def coletar_camara(session: Session, ano_inicial: Optional[int] = None, numdias: Optional[int] = None) -> int:
     total = 0
     for sigla in camara_client.SIGLAS_TIPO:
         for kw in camara_client.PALAVRAS_CHAVE:
             logger.info("Câmara — coletando %s | keyword='%s'", sigla, kw)
-            for item_raw in camara_client.listar_proposicoes(sigla, kw, ano_inicial):
+            for item_raw in camara_client.listar_proposicoes(sigla, kw, ano_inicial, numdias):
                 pl_id = item_raw.get("id")
                 if not pl_id:
                     continue
