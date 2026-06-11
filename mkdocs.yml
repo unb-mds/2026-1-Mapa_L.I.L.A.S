@@ -80,7 +80,10 @@ nav:
           - Estudo API Câmara/Senado: "Estudos/Sprint04/Estudo API da Câmara do Senado.md"
           - Pesquisa Legislativa: "Estudos/Sprint04/Pesquisa Legislativa - Monitoramento de PLs (API do Senado).md"
           - Story Map Figma: Estudos/Sprint04/StoryMap-figma.md
-          - Wireframe: Estudos/Sprint04/Wireframe.md
+          - Implementação de Dashboard: Estudos/Sprint04/Implementacao_Dashboard.md
+
+  - Release Notes:
+      - Release 01: "Release Notes/release_01.md"
 
   - Métricas de Produtividade:
       - Dashboard: scrum/index.html
