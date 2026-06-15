@@ -2,7 +2,7 @@ name: Ingestão de Dados Diária
 
 on:
   schedule:
-    - cron: '33 3 * * *'
+    - cron: '57 2 * * 2-6'  # Seg-Sex 23:57 BRT (Ter-Sáb UTC)
   workflow_dispatch:
 
 permissions:
