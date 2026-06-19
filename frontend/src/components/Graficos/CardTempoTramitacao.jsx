@@ -1,24 +1,13 @@
 const BADGE_CONFIG = {
-  aumento: {
-    icone: '↗',
-    bg: 'bg-pink-50',
-    texto: 'text-red-700',
-    sinal: '+',
-  },
-  reducao: {
-    icone: '↘',
-    bg: 'bg-green-50',
-    texto: 'text-green-700',
-    sinal: '-',
-  },
+  aumento: { icone: '↗', bg: 'bg-pink-50', texto: 'text-red-700', sinal: '+' },
+  reducao: { icone: '↘', bg: 'bg-green-50', texto: 'text-green-700', sinal: '-' },
 };
 
 export default function CardTempoTramitacao({ dados }) {
   const badge = BADGE_CONFIG[dados.tendencia] ?? BADGE_CONFIG.aumento;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 relative">
-      {/* Ícone decorativo */}
+    <div className="bg-white border border-gray-200 rounded-xl p-6 relative flex flex-col items-center text-center h-full">
       <span className="absolute top-5 right-5 text-4xl opacity-20 select-none">⏳</span>
 
       <h2 className="text-base font-semibold text-gray-700 mb-4">

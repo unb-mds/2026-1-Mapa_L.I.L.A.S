@@ -14,6 +14,11 @@ const METADADOS = [
   { label: 'Regime',               campo: 'regime' },
 ];
 
+function valorOuVazio(valor) {
+  if (valor === null || valor === undefined || valor === '') return 'Não informado';
+  return valor;
+}
+
 export default function CardPrincipal({ pl }) {
   const status = STATUS_CONFIG[pl.status] ?? STATUS_CONFIG.em_tramitacao;
 
@@ -31,7 +36,7 @@ export default function CardPrincipal({ pl }) {
 
       {/* Ementa */}
       <p className="text-sm text-gray-600 leading-relaxed mb-6">
-        {pl.ementa}
+        {valorOuVazio(pl.ementa)}
       </p>
 
       {/* Metadados em grid */}
@@ -41,7 +46,9 @@ export default function CardPrincipal({ pl }) {
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
               {label}
             </p>
-            <p className="text-sm font-medium text-gray-800">{pl[campo]}</p>
+            <p className="text-sm font-medium text-gray-800">
+              {valorOuVazio(pl[campo])}
+            </p>
           </div>
         ))}
       </div>

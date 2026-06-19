@@ -11,12 +11,12 @@ function SkeletonGraficos() {
     <div className="animate-pulse">
       <div className="h-8 bg-gray-200 rounded w-96 mb-2" />
       <div className="h-4 bg-gray-200 rounded w-72 mb-8" />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
           <div className="bg-white border border-gray-200 rounded-xl p-6 h-44" />
           <div className="bg-white border border-gray-200 rounded-xl p-6 h-32" />
         </div>
-        <div className="space-y-5">
+        <div className="flex flex-col gap-6">
           <div className="bg-white border border-gray-200 rounded-xl p-5 h-56" />
           <div className="bg-white border border-gray-200 rounded-xl p-5 h-52" />
         </div>
@@ -51,7 +51,6 @@ export default function Graficos() {
 
         {!loading && !error && dados && (
           <>
-            {/* Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Mapa da Legislação de Feminicídio
@@ -61,18 +60,19 @@ export default function Graficos() {
               </p>
             </div>
 
-            {/* Grid principal */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Coluna principal */}
-              <div className="lg:col-span-2 space-y-5">
-                <CardTempoTramitacao dados={dados.tempo_medio_tramitacao} />
-                <CardCTADashboard />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Coluna esquerda */}
+              <div className="flex flex-col gap-6">
+                <CardParlamentaresAtivos parlamentares={dados.parlamentares_ativos} />
+                <div className="flex-1">
+                  <CardTempoTramitacao dados={dados.tempo_medio_tramitacao} />
+                </div>
               </div>
 
-              {/* Coluna lateral */}
-              <div className="space-y-5">
+              {/* Coluna direita */}
+              <div className="flex flex-col gap-6">
                 <CardTopEstados estados={dados.top_estados} />
-                <CardParlamentaresAtivos parlamentares={dados.parlamentares_ativos} />
+                <CardCTADashboard />
               </div>
             </div>
           </>
