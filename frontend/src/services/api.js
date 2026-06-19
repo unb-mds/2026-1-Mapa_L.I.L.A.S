@@ -1,7 +1,8 @@
 import { mockProjetos, mockFiltros } from '../mocks/projetosLei';
 import { mockPLsDetalhados } from '../mocks/plDetalhado';
+import { mockGraficosResumo } from '../mocks/graficosResumo';
 // Mude para false quando o backend estiver pronto
-const USE_MOCK = false;
+const USE_MOCK = true;
 const BASE_URL = 'http://localhost:8000';
 
 export async function fetchProjetos(params = {}) {
@@ -65,6 +66,19 @@ export async function fetchProjetos(params = {}) {
 
   const response = await fetch(`${BASE_URL}/api/projetos-de-lei?${query}`);
   if (!response.ok) throw new Error('Erro ao buscar projetos');
+  return response.json();
+}
+
+const USE_MOCK_GRAFICOS = true;
+
+export async function fetchGraficosResumo() {
+  if (USE_MOCK_GRAFICOS) {
+    await new Promise((r) => setTimeout(r, 600));
+    return mockGraficosResumo;
+  }
+ 
+  const response = await fetch(`${BASE_URL}/api/graficos/resumo`);
+  if (!response.ok) throw new Error('Erro ao buscar resumo dos gráficos');
   return response.json();
 }
 
