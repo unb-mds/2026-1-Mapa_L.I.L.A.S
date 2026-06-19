@@ -10,7 +10,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/projetos" element={<ProjetosLei />} />
-        <Route path="/projetos/:id" element={<PLDetalhado />} />
+        <Route path="/projetos/:casa/:numero/:ano" element={<PLDetalhado />} />
         <Route path="/graficos" element={<Graficos />} />
       </Routes>
     </BrowserRouter>

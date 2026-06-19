@@ -58,14 +58,10 @@ export const mockPLsDetalhados = {
     autor_partido: "MDB",
     autor_uf: "MG",
     ementa: "Institui o benefício de pensão especial aos filhos e dependentes menores de dezoito anos de mulheres vítimas do crime de feminicídio no Brasil.",
-    estagio_atual: "comissao",
+    estagio_atual: "rejeitado",
     url_pdf: null,
     temas: ["Feminicídio", "Proteção à Criança", "Previdência Social"],
-    historico: [
-      { data: "10/01/2023", titulo: "Arquivado ao final da legislatura", descricao: "Projeto arquivado por não ter sido apreciado até o final da 56ª Legislatura." },
-      { data: "15/05/2022", titulo: "Aguardando Pauta na Comissão", descricao: "Projeto aguarda inclusão em pauta na Comissão de Seguridade Social e Família." },
-      { data: "22/09/2021", titulo: "Apresentação do Projeto", descricao: "Projeto apresentado na mesa diretora da Câmara dos Deputados." },
-    ],
+    historico: [],
   },
   "pl-555-2023": {
     id: "pl-555-2023",

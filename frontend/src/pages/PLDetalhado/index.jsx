@@ -54,8 +54,8 @@ function NaoEncontrado() {
 }
 
 export default function PLDetalhado() {
-  const { id } = useParams();
-  const { pl, loading, error } = usePLDetalhado(id);
+  const { casa, numero, ano } = useParams();
+  const { pl, loading, error } = usePLDetalhado(casa, numero, ano);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -66,7 +66,9 @@ export default function PLDetalhado() {
         {!loading && error && error !== 'not_found' && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <p className="text-gray-500 text-center">Não foi possível carregar o projeto. Tente novamente.</p>
-            <Link to="/projetos" className="text-sm text-[#5B4FCF] hover:underline">Voltar para a listagem</Link>
+            <Link to="/projetos" className="text-sm text-[#5B4FCF] hover:underline">
+              Voltar para a listagem
+            </Link>
           </div>
         )}
         {!loading && !error && pl && (
@@ -75,7 +77,11 @@ export default function PLDetalhado() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-5">
                 <CardPrincipal pl={pl} />
-                <HistoricoTramitacao historico={pl.historico} />
+                {/* Passa estagioAtual para o Histórico saber se o PL foi arquivado */}
+                <HistoricoTramitacao
+                  historico={pl.historico}
+                  estagioAtual={pl.estagio_atual}
+                />
               </div>
               <div className="space-y-4">
                 <CardIntegraPDF urlPdf={pl.url_pdf} />

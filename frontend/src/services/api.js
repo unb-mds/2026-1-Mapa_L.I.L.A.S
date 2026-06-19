@@ -2,7 +2,7 @@ import { mockProjetos, mockFiltros } from '../mocks/projetosLei';
 import { mockPLsDetalhados } from '../mocks/plDetalhado';
 import { mockGraficosResumo } from '../mocks/graficosResumo';
 // Mude para false quando o backend estiver pronto
-const USE_MOCK = true;
+const USE_MOCK = false;
 const BASE_URL = 'http://localhost:8000';
 
 export async function fetchProjetos(params = {}) {
@@ -92,35 +92,34 @@ export async function fetchFiltros() {
   if (!response.ok) throw new Error('Erro ao buscar filtros');
   return response.json();
 }
-
-export async function fetchPLDetalhado(id, dadosCard = null) {
-  const USE_MOCK_DETALHADO = true;
-
+ 
+export async function fetchPLDetalhado(casa, numero, ano, dadosCard = null) {
+  const USE_MOCK_DETALHADO = false;
+ 
   if (USE_MOCK_DETALHADO) {
     await new Promise((r) => setTimeout(r, 500));
-    const pl = mockPLsDetalhados[id];
-
+ 
+    // Tenta encontrar no mock pelo id composto
+    const idMock = `pl-${numero}-${ano}`;
+    const pl = mockPLsDetalhados[idMock];
+ 
     const todos = Object.values(mockPLsDetalhados);
-    const hash = id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const hash = `${casa}${numero}${ano}`.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
     const plBase = pl ? { ...pl } : { ...todos[hash % todos.length] };
-
-    // Extrai número e ano do ID real
-    const partes = id.split('-');
-    if (partes.length >= 3) {
-      plBase.numero = partes[1];
-      plBase.ano = Number(partes[2]);
-      plBase.id = id;
-    }
-
-    // Sobrescreve com dados reais do card (prioridade máxima)
+ 
+    // Sempre usa o número e ano reais da URL
+    plBase.numero = numero;
+    plBase.ano = Number(ano);
+ 
+    // Dados reais do card têm prioridade máxima
     if (dadosCard) {
       Object.assign(plBase, dadosCard);
     }
-
+ 
     return plBase;
   }
-
-  const response = await fetch(`${BASE_URL}/api/projetos-de-lei/${id}`);
+ 
+  const response = await fetch(`${BASE_URL}/api/projetos-de-lei/${casa}/${numero}/${ano}`);
   if (response.status === 404) throw new Error('not_found');
   if (!response.ok) throw new Error('Erro ao buscar projeto de lei');
   return response.json();
