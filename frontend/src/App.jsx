@@ -3,6 +3,7 @@ import Inicio from './pages/Inicio';
 import ProjetosLei from './pages/ProjetosLei';
 import PLDetalhado from './pages/PLDetalhado';
 import Graficos from './pages/Graficos';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/projetos" element={<ProjetosLei />} />
         <Route path="/projetos/:casa/:numero/:ano" element={<PLDetalhado />} />
         <Route path="/graficos" element={<Graficos />} />
+        <Route path="/graficos/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );
