@@ -258,12 +258,19 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             })
         historico.reverse()
         
+        if pl.descricao_situacao == "Transformado em Norma Jurídica":
+            status_camara = "aprovado"
+        elif pl.descricao_situacao == "Arquivada":
+            status_camara = "arquivado"
+        else:
+            status_camara = "em_tramitacao"
+
         # O contrato atualizado especificou "Câmara dos Deputados"
         return {
             "numero": str(pl.numero),
             "ano": pl.ano,
             "casa": "Câmara dos Deputados",
-            "status": normalizar_status_camara(pl.descricao_situacao),
+            "status": status_camara,
             "regime": None,
             "data_apresentacao": pl.data_apresentacao.strftime("%d/%m/%Y") if pl.data_apresentacao else None,
             "autor_nome": autores_nomes[0] if autores_nomes else None,
@@ -306,11 +313,19 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             })
         historico.reverse()
         
+        status_raw = pl.sigla_tipo_deliberacao or ""
+        if status_raw in ["APROVADA_EM_COMISSAO_TERMINATIVA", "SAN"]:
+            status_senado = "aprovado"
+        elif status_raw in ["RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA", "PREJUDICADO"]:
+            status_senado = "arquivado"
+        else:
+            status_senado = "em_tramitacao"
+
         return {
             "numero": str(numero),
             "ano": ano,
             "casa": "Senado Federal",
-            "status": normalizar_status_senado(pl.sigla_tipo_deliberacao, pl.tramitando),
+            "status": status_senado,
             "regime": None,
             "data_apresentacao": pl.data_apresentacao.strftime("%d/%m/%Y") if pl.data_apresentacao else None,
             "autor_nome": autores_nomes[0] if autores_nomes else None,
