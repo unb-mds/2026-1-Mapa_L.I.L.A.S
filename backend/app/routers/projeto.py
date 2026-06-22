@@ -13,30 +13,59 @@ def mapear_estagio_atual_senado(situacao: str) -> str:
     if not situacao:
         return "rejeitado"
     situacao = situacao.upper()
-    if situacao in ["AGUARDANDO DESPACHO", "MATÉRIA DESPACHADA"]:
+    if situacao in ["AGDESP"]:
         return "apresentacao"
-    if situacao in ["AGUARDANDO DESIGNAÇÃO DO RELATOR", "MATÉRIA COM A RELATORIA", "PRONTA PARA A PAUTA NA COMISSÃO", "APROVADO PARECER NA COMISSÃO"]:
+    if situacao in ["AGDREL", "RELATOR", "PRONTPAUT"]:
         return "comissao"
-    if situacao in ["REMETIDA À CÂMARA DOS DEPUTADOS"]:
+    if situacao in ["INPAUTA", "RMCD"]:
         return "votacao"
-    if situacao in ["TRANSFORMADA EM NORMA JURÍDICA"]:
+    if situacao in ["RMSAN"]:
         return "sancao"
-    if situacao in ["REJEITADA", "PREJUDICADA", "ARQUIVADA AO FINAL DA LEGISLATURA", "ARQUIVADO NA CÂMARA DOS DEPUTADOS", "RETIRADA PELO AUTOR"]:
+    if situacao in ["TNJR", "TNJRVETO"]:
+        return "transformado em normajuridica"
+    if situacao in ["RJTDA", "PRJDA", "RTPA", "ARQVD", "ARQV_CD"]:
         return "rejeitado"
     return "apresentacao"  # Fallback
 
 def mapear_estagio_atual_camara(situacao: str) -> str:
     if not situacao:
         return "rejeitado"
-    if situacao in ["Aguardando Recebimento", "Aguardando Despacho do Presidente da Câmara dos Deputados (Análise)", "Aguardando Despacho do Presidente da Câmara dos Deputados (Autorização)", "Aguardando Despacho do Presidente da Câmara dos Deputados (Chancela)", "Aguardando Chancela e Publicação do Despacho", "Aguardando Autorização do Despacho", "Aguardando Encaminhamento"]:
+    if situacao in [
+        "Aguardando Recebimento",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Análise)",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Autorização)",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Chancela)",
+        "Aguardando Chancela e Publicação do Despacho",
+        "Aguardando Autorização do Despacho",
+        "Aguardando Encaminhamento"
+    ]:
         return "apresentacao"
-    if situacao in ["Aguardando Designação de Relator(a)", "Aguardando Designação - Aguardando Devolução de Relator(a) que deixou de ser Membro", "Aguardando Parecer", "Ag. Análise de Inconstitucionalidade", "Tramitando em Conjunto"]:
+    if situacao in [
+        "Aguardando Designação de Relator(a)",
+        "Aguardando Designação - Aguardando Devolução de Relator(a) que deixou de ser Membro",
+        "Aguardando Parecer",
+        "Ag. Análise de Inconstitucionalidade",
+        "Aguardando Vistas",
+        "Tramitando em Conjunto"
+    ]:
         return "comissao"
-    if situacao in ["Pronta para Pauta", "Aguardando Deliberação", "Aguardando Deliberação de Recurso", "Aguardando Apreciação pelo Senado Federal"]:
+    if situacao in [
+        "Pronta para Pauta",
+        "Aguardando Deliberação de Recurso"
+    ]:
         return "votacao"
-    if situacao in ["Transformado em Norma Jurídica", "Vetado totalmente", "Aguardando Apreciação do Veto"]:
+    if situacao in [
+        "Transformado em Norma Jurídica",
+        "Vetado totalmente",
+        "Aguardando Apreciação do Veto"
+    ]:
         return "sancao"
-    if situacao in ["Arquivada", "Devolvida ao(à) Autor(a)", "Retirado pelo(a) Autor(a)"]:
+    if situacao in [
+        "Arquivada",
+        "Devolvida ao(à) Autor(a)",
+        "Retirado pelo(a) Autor(a)"
+    ]:
         return "rejeitado"
     return "apresentacao"  # Fallback
 
@@ -132,9 +161,11 @@ def listar_projetos(
     # Extrai exatamente 4 dígitos imediatamente após a barra: ex "PL 1029/2026 (Sub)" -> "2026"
     ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
 
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+
     status_senado = case(
-        (PlSenado.sigla_tipo_deliberacao.in_(["APROVADA_EM_COMISSAO_TERMINATIVA", "SAN"]), "aprovado"),
-        (PlSenado.sigla_tipo_deliberacao.in_(["RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA","PREJUDICADO"]), "arquivado"),
+        (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
+        (or_(situacao_atual_senado.in_(["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]), situacao_atual_senado.is_(None), situacao_atual_senado == 'NULL', situacao_atual_senado == ''), "arquivado"),
         else_="em_tramitacao"
     ).label("status_normalizado")
 
@@ -277,7 +308,7 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             "autor_partido": autores_partidos[0] if autores_partidos else None,
             "autor_uf": autores_ufs[0] if autores_ufs else None,
             "ementa": pl.ementa,
-            "estagio_atual": mapear_estagio_atual_camara(pl.descricao_situacao),
+            "estagio_atual": "aprovado" if status_camara == "aprovado" else mapear_estagio_atual_camara(pl.descricao_situacao),
             "url_pdf": dados_raw.get("urlInteiroTeor"),
             "temas": extrair_temas(dados_raw.get("keywords")),
             "historico": historico
@@ -313,10 +344,12 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             })
         historico.reverse()
         
-        status_raw = pl.sigla_tipo_deliberacao or ""
-        if status_raw in ["APROVADA_EM_COMISSAO_TERMINATIVA", "SAN"]:
+        situacao_atual = dados_raw.get("situacaoAtual")
+        status_raw = situacao_atual.upper() if situacao_atual else None
+        
+        if status_raw in ["TNJR", "TNJRVETO"]:
             status_senado = "aprovado"
-        elif status_raw in ["RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA", "PREJUDICADO"]:
+        elif not status_raw or status_raw in ["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]:
             status_senado = "arquivado"
         else:
             status_senado = "em_tramitacao"

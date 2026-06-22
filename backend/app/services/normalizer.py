@@ -351,12 +351,15 @@ def normalizar_status_camara(descricao_situacao: Optional[str]) -> str:
         return "arquivado"
     return "em_tramitacao"
 
-def normalizar_status_senado(sigla_tipo_deliberacao: Optional[str], tramitando: Optional[bool]) -> str:
+def normalizar_status_senado(situacao_atual: Optional[str], tramitando: Optional[bool] = None) -> str:
     """
-    Converte sigla_tipo_deliberacao + tramitando do Senado nos 3 valores aceitos pelo front end.
+    Converte situacao_atual do Senado nos 3 valores aceitos pelo front end.
     """
-    if sigla_tipo_deliberacao in ("AP", "SAN"):
+    if not situacao_atual:
+        return "arquivado"
+    situacao_atual = situacao_atual.upper()
+    if situacao_atual in ("TNJR", "TNJRVETO"):
         return "aprovado"
-    if sigla_tipo_deliberacao in ("RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA"):
+    if situacao_atual in ("ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"):
         return "arquivado"
     return "em_tramitacao"
