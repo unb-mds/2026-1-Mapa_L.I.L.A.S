@@ -6,7 +6,7 @@ const ESTAGIOS = [
 ];
 
 export default function EstagioAtual({ estagioAtual }) {
-  // Caso especial: PL arquivado/rejeitado
+  // Caso especial: PL rejeitado/arquivado
   if (estagioAtual === 'rejeitado') {
     return (
       <div className="mt-6">
@@ -14,6 +14,19 @@ export default function EstagioAtual({ estagioAtual }) {
         <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
           <span className="text-red-500">✖</span>
           <p className="text-sm text-red-700 font-medium">Projeto arquivado / rejeitado</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Caso especial: PL aprovado (mas ainda não sancionado)
+  if (estagioAtual === 'aprovado') {
+    return (
+      <div className="mt-6">
+        <h3 className="text-base font-semibold text-gray-800 mb-3">Estágio Atual</h3>
+        <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
+          <span className="text-green-600">✅</span>
+          <p className="text-sm text-green-700 font-medium">Projeto aprovado</p>
         </div>
       </div>
     );
