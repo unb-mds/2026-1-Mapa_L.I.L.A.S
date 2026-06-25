@@ -21,6 +21,7 @@ from app.services.normalizer import (
     upsert_tramitacoes_camara,
     upsert_tramitacoes_senado,
 )
+from app.services.nlp_service import get_dynamic_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +33,10 @@ INTERVALO_HORAS = 2
 
 def coletar_camara(session: Session, ano_inicial: Optional[int] = None, numdias: Optional[int] = None) -> int:
     total = 0
+    palavras_chave = get_dynamic_keywords(camara_client.PALAVRAS_CHAVE)
+    
     for sigla in camara_client.SIGLAS_TIPO:
-        for kw in camara_client.PALAVRAS_CHAVE:
+        for kw in palavras_chave:
             logger.info("Câmara — coletando %s | keyword='%s'", sigla, kw)
             for item_raw in camara_client.listar_proposicoes(sigla, kw, ano_inicial, numdias):
                 pl_id = item_raw.get("id")
@@ -93,8 +96,10 @@ def coletar_senado(
     numdias: Optional[int] = None,
 ) -> int:
     total = 0
+    palavras_chave = get_dynamic_keywords(senado_client.PALAVRAS_CHAVE)
+    
     for sigla in senado_client.SIGLAS_TIPO:
-        for kw in senado_client.PALAVRAS_CHAVE:
+        for kw in palavras_chave:
             logger.info("Senado — coletando %s | keyword='%s'", sigla, kw)
             
             materias_raw = senado_client.pesquisar_materias(

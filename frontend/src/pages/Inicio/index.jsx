@@ -1,45 +1,7 @@
 import { Link } from 'react-router-dom';
 import NavBar from '../../components/NavBar';
 import Footer from '../../components/Footer';
-
-const STATS = [
-  {
-    label: 'Total de Projetos de Feminicídio',
-    value: '452',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[#5B4FCF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Em Tramitação',
-    value: '128',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Aprovados',
-    value: '45',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Arquivados',
-    value: '279',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8m-9 4h4" />
-      </svg>
-    ),
-  },
-];
+import { useStats } from '../../hooks/useStats';
 
 const OBJECTIVES = [
   {
@@ -89,6 +51,45 @@ const DOCS_URL = 'https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S';
 const FIGMA_URL = 'https://www.figma.com/board/JerWZI6mxVFXDsDmY6ZMap';
 
 export default function Inicio() {
+  const { stats, loading } = useStats();
+  const STATS = [
+  {
+    label: 'Total de Projetos de Feminicídio',
+    value: loading ? '--' : stats.total,
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[#5B4FCF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Em Tramitação',
+    value: loading ? '--' : stats.emTramitacao,
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Aprovados',
+    value: loading ? '--' : stats.aprovados,
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Arquivados',
+    value: loading ? '--' : stats.arquivados,
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8m-9 4h4" />
+      </svg>
+    ),
+  },
+];
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <NavBar />

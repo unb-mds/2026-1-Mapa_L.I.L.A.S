@@ -2,7 +2,13 @@ import logging
 import argparse
 import json
 import time
+import os
 from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+# Carrega variáveis do .env (como DATABASE_URL e OPENAI_API_KEY)
+load_dotenv()
+
 from app.database import SessionLocal
 from app.services.collector import coletar_camara, coletar_senado
 
