@@ -13,12 +13,21 @@ function formatarData(dataISO) {
   return `${dia} ${MESES[parseInt(mes) - 1]} ${ano}`;
 }
 
+// Converte o valor de "casa" do backend para o formato da URL
+function casaParaUrl(casa) {
+  if (!casa) return 'senado';
+  const c = casa.toLowerCase();
+  if (c.includes('camara') || c.includes('câmara') || c.includes('deputados')) return 'camara';
+  return 'senado';
+}
+
 export default function CardPL({ projeto }) {
   const navigate = useNavigate();
   const status = STATUS_CONFIG[projeto.status] ?? STATUS_CONFIG.em_tramitacao;
 
   const handleVerDetalhes = () => {
-    navigate(`/projetos/${projeto.id}`, {
+    const casaUrl = casaParaUrl(projeto.casa);
+    navigate(`/projetos/${casaUrl}/${projeto.numero}/${projeto.ano}`, {
       state: {
         numero: projeto.numero,
         ano: projeto.ano,

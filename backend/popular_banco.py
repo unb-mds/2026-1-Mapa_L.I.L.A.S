@@ -40,7 +40,7 @@ def executar_carga(mode: str, report_path: str = "ingestion-report.json"):
             total_senado = coletar_senado(db, ano_inicial=ano)
             print(f"Senado finalizado! {total_senado} registros.")
         else: # incremental
-            total_camara = coletar_camara(db)
+            total_camara = coletar_camara(db, numdias=2)
             print(f"Câmara finalizada! {total_camara} registros.")
             total_senado = coletar_senado(db, numdias=2)
             print(f"Senado finalizado! {total_senado} registros.")

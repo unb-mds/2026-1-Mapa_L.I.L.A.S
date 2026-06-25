@@ -121,16 +121,36 @@ def upsert_tramitacoes_camara(session: Session, id_pl: int, tramitacoes_raw: Any
         for tramitacao in lista_tramitacoes:
              if not isinstance(tramitacao, dict): continue
                  
-             nova_tramitacao = TramitacaoCamara(
-                 id_pl=id_pl,
-                 data_tramitacao=tramitacao.get("dataHora"),
-                 situacao=tramitacao.get("descricaoSituacao"),
-                 descricao=tramitacao.get("descricaoTramitacao"),
-                 local=tramitacao.get("siglaOrgao"),
-                 sequencia=tramitacao.get("sequencia"),
-                 dados_raw=tramitacao
-              )
-             session.merge(nova_tramitacao)
+             seq = tramitacao.get("sequencia")
+             data_t = tramitacao.get("dataHora")
+             
+             # Busca se já existe uma tramitação igual
+             query = session.query(TramitacaoCamara).filter(TramitacaoCamara.id_pl == id_pl)
+             if seq is not None:
+                 query = query.filter(TramitacaoCamara.sequencia == seq)
+             elif data_t is not None:
+                 query = query.filter(TramitacaoCamara.data_tramitacao == data_t)
+                 
+             existente = query.first()
+
+             if existente:
+                 # Atualiza
+                 existente.situacao = tramitacao.get("descricaoSituacao")
+                 existente.descricao = tramitacao.get("descricaoTramitacao")
+                 existente.local = tramitacao.get("siglaOrgao")
+                 existente.dados_raw = tramitacao
+             else:
+                 # Insere nova
+                 nova_tramitacao = TramitacaoCamara(
+                     id_pl=id_pl,
+                     data_tramitacao=data_t,
+                     situacao=tramitacao.get("descricaoSituacao"),
+                     descricao=tramitacao.get("descricaoTramitacao"),
+                     local=tramitacao.get("siglaOrgao"),
+                     sequencia=seq,
+                     dados_raw=tramitacao
+                  )
+                 session.add(nova_tramitacao)
             
     except Exception as exc:
         logger.error("Erro no upsert_tramitacoes_camara para o PL %d: %s", id_pl, exc)
@@ -281,16 +301,34 @@ def upsert_tramitacoes_senado(session: Session, id_pl: int, movimentacoes_raw: A
             ente_admin = tramitacao.get("enteAdministrativo", {})
             local_nome = ente_admin.get("nome") or ente_admin.get("sigla") or tramitacao.get("DescricaoLocal") or tramitacao.get("local") or tramitacao.get("orgao")
             
-            nova_tramitacao = TramitacaoSenado(
-                id_pl=id_pl,
-                data_tramitacao=tramitacao.get("data") or tramitacao.get("DataMovimentacao") or tramitacao.get("dataHora"),
-                situacao=tramitacao.get("siglaSituacaoIniciada") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("situacao") or "Informação",
-                descricao=tramitacao.get("descricao") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("texto"),
-                local=local_nome,
-                sequencia=tramitacao.get("id") or tramitacao.get("SequenciaMovimentacao") or tramitacao.get("sequencia") or (idx + 1),
-                dados_raw=tramitacao
-            )
-            session.merge(nova_tramitacao)
+            seq = tramitacao.get("id") or tramitacao.get("SequenciaMovimentacao") or tramitacao.get("sequencia") or (idx + 1)
+            data_t = tramitacao.get("data") or tramitacao.get("DataMovimentacao") or tramitacao.get("dataHora")
+            
+            # Busca se já existe uma tramitação igual
+            query = session.query(TramitacaoSenado).filter(TramitacaoSenado.id_pl == id_pl)
+            if seq is not None:
+                 query = query.filter(TramitacaoSenado.sequencia == seq)
+            elif data_t is not None:
+                 query = query.filter(TramitacaoSenado.data_tramitacao == data_t)
+                 
+            existente = query.first()
+
+            if existente:
+                existente.situacao = tramitacao.get("siglaSituacaoIniciada") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("situacao") or "Informação"
+                existente.descricao = tramitacao.get("descricao") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("texto")
+                existente.local = local_nome
+                existente.dados_raw = tramitacao
+            else:
+                nova_tramitacao = TramitacaoSenado(
+                    id_pl=id_pl,
+                    data_tramitacao=data_t,
+                    situacao=tramitacao.get("siglaSituacaoIniciada") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("situacao") or "Informação",
+                    descricao=tramitacao.get("descricao") or tramitacao.get("DescricaoMovimentacao") or tramitacao.get("texto"),
+                    local=local_nome,
+                    sequencia=seq,
+                    dados_raw=tramitacao
+                )
+                session.add(nova_tramitacao)
             
     except Exception as exc:
         logger.error("Erro no upsert_tramitacoes_senado para o PL %d: %s", id_pl, exc)
@@ -313,12 +351,15 @@ def normalizar_status_camara(descricao_situacao: Optional[str]) -> str:
         return "arquivado"
     return "em_tramitacao"
 
-def normalizar_status_senado(sigla_tipo_deliberacao: Optional[str], tramitando: Optional[bool]) -> str:
+def normalizar_status_senado(situacao_atual: Optional[str], tramitando: Optional[bool] = None) -> str:
     """
-    Converte sigla_tipo_deliberacao + tramitando do Senado nos 3 valores aceitos pelo front end.
+    Converte situacao_atual do Senado nos 3 valores aceitos pelo front end.
     """
-    if sigla_tipo_deliberacao in ("AP", "SAN"):
+    if not situacao_atual:
+        return "arquivado"
+    situacao_atual = situacao_atual.upper()
+    if situacao_atual in ("TNJR", "TNJRVETO"):
         return "aprovado"
-    if sigla_tipo_deliberacao in ("RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA"):
+    if situacao_atual in ("ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"):
         return "arquivado"
     return "em_tramitacao"

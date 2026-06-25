@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func, and_, or_, cast, String, Integer, null, case
 from app.database import get_db
@@ -8,6 +8,74 @@ from app.models import (
 )
 import math
 import re  # <-- IMPORTANTE: Adicionado para usar regex na rota de filtros
+
+def mapear_estagio_atual_senado(situacao: str) -> str:
+    if not situacao:
+        return "rejeitado"
+    situacao = situacao.upper()
+    if situacao in ["AGDESP"]:
+        return "apresentacao"
+    if situacao in ["AGDREL", "RELATOR", "PRONTPAUT"]:
+        return "comissao"
+    if situacao in ["INPAUTA", "RMCD"]:
+        return "votacao"
+    if situacao in ["RMSAN"]:
+        return "sancao"
+    if situacao in ["TNJR", "TNJRVETO"]:
+        return "transformado em normajuridica"
+    if situacao in ["RJTDA", "PRJDA", "RTPA", "ARQVD", "ARQV_CD"]:
+        return "rejeitado"
+    return "apresentacao"  # Fallback
+
+def mapear_estagio_atual_camara(situacao: str) -> str:
+    if not situacao:
+        return "rejeitado"
+    if situacao in [
+        "Aguardando Recebimento",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Análise)",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Autorização)",
+        "Aguardando Despacho do Presidente da Câmara dos Deputados (Chancela)",
+        "Aguardando Chancela e Publicação do Despacho",
+        "Aguardando Autorização do Despacho",
+        "Aguardando Encaminhamento"
+    ]:
+        return "apresentacao"
+    if situacao in [
+        "Aguardando Designação de Relator(a)",
+        "Aguardando Designação - Aguardando Devolução de Relator(a) que deixou de ser Membro",
+        "Aguardando Parecer",
+        "Ag. Análise de Inconstitucionalidade",
+        "Aguardando Vistas",
+        "Tramitando em Conjunto"
+    ]:
+        return "comissao"
+    if situacao in [
+        "Pronta para Pauta",
+        "Aguardando Deliberação de Recurso"
+    ]:
+        return "votacao"
+    if situacao in [
+        "Transformado em Norma Jurídica",
+        "Vetado totalmente",
+        "Aguardando Apreciação do Veto"
+    ]:
+        return "sancao"
+    if situacao in [
+        "Arquivada",
+        "Devolvida ao(à) Autor(a)",
+        "Retirado pelo(a) Autor(a)"
+    ]:
+        return "rejeitado"
+    return "apresentacao"  # Fallback
+
+def extrair_temas(temas_raw: str) -> list:
+    if not temas_raw:
+        return []
+    # Replace the dot at the end for Senate
+    temas_raw = temas_raw.rstrip(".")
+    # Split by comma and strip whitespaces
+    return [t.strip() for t in temas_raw.split(",") if t.strip()]
 
 router = APIRouter(prefix="/api/projetos-de-lei")
 
@@ -93,9 +161,11 @@ def listar_projetos(
     # Extrai exatamente 4 dígitos imediatamente após a barra: ex "PL 1029/2026 (Sub)" -> "2026"
     ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
 
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+
     status_senado = case(
-        (PlSenado.sigla_tipo_deliberacao.in_(["APROVADA_EM_COMISSAO_TERMINATIVA", "SAN"]), "aprovado"),
-        (PlSenado.sigla_tipo_deliberacao.in_(["RETIRADO_PELO_AUTOR", "ARQUIVADO_FIM_LEGISLATURA","PREJUDICADO"]), "arquivado"),
+        (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
+        (or_(situacao_atual_senado.in_(["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]), situacao_atual_senado.is_(None), situacao_atual_senado == 'NULL', situacao_atual_senado == ''), "arquivado"),
         else_="em_tramitacao"
     ).label("status_normalizado")
 
@@ -181,13 +251,127 @@ def listar_projetos(
             "ultima_atualizacao": row.ultima_atualizacao.strftime("%Y-%m-%d") if row.ultima_atualizacao else None
         })
 
-    return {
-        "total": total_items,
-        "page": page,
-        "per_page": per_page,
-        "total_pages": math.ceil(total_items / per_page) if total_items > 0 else 0,
-        "projetos": projetos
-    }
+    return {"projetos": projetos, "total": total_items, "page": page, "per_page": per_page, "total_pages": math.ceil(total_items / per_page) if per_page else 1}
+
+@router.get("/{casa}/{numero}/{ano}")
+def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depends(get_db)):
+    from app.services.normalizer import normalizar_status_camara, normalizar_status_senado
+    casa_low = casa.lower()
+    
+    if casa_low in ["camara", "câmara", "camara dos deputados", "câmara dos deputados"]:
+        pl = db.query(PlCamara).filter(
+            PlCamara.numero == int(numero), 
+            PlCamara.ano == ano
+        ).order_by(PlCamara.updated_at.desc()).first()
+        
+        if not pl:
+            raise HTTPException(status_code=404, detail="Projeto não encontrado")
+            
+        dados_raw = pl.dados_raw or {}
+        
+        autores_nomes = []
+        autores_partidos = []
+        autores_ufs = []
+        for autoria in pl.autorias:
+            if autoria.parlamentar:
+                autores_nomes.append(autoria.parlamentar.nome_eleitoral)
+                if autoria.parlamentar.sigla_partido:
+                    autores_partidos.append(autoria.parlamentar.sigla_partido)
+                if autoria.parlamentar.sigla_uf:
+                    autores_ufs.append(autoria.parlamentar.sigla_uf)
+                    
+        historico = []
+        for t in pl.tramitacoes:
+            historico.append({
+                "data": t.data_tramitacao.strftime("%d/%m/%Y") if t.data_tramitacao else None,
+                "titulo": t.situacao or "Tramitação",
+                "descricao": t.descricao
+            })
+        historico.reverse()
+        
+        if pl.descricao_situacao == "Transformado em Norma Jurídica":
+            status_camara = "aprovado"
+        elif pl.descricao_situacao == "Arquivada":
+            status_camara = "arquivado"
+        else:
+            status_camara = "em_tramitacao"
+
+        # O contrato atualizado especificou "Câmara dos Deputados"
+        return {
+            "numero": str(pl.numero),
+            "ano": pl.ano,
+            "casa": "Câmara dos Deputados",
+            "status": status_camara,
+            "regime": None,
+            "data_apresentacao": pl.data_apresentacao.strftime("%d/%m/%Y") if pl.data_apresentacao else None,
+            "autor_nome": autores_nomes[0] if autores_nomes else None,
+            "autor_partido": autores_partidos[0] if autores_partidos else None,
+            "autor_uf": autores_ufs[0] if autores_ufs else None,
+            "ementa": pl.ementa,
+            "estagio_atual": "aprovado" if status_camara == "aprovado" else mapear_estagio_atual_camara(pl.descricao_situacao),
+            "url_pdf": dados_raw.get("urlInteiroTeor"),
+            "temas": extrair_temas(dados_raw.get("keywords")),
+            "historico": historico
+        }
+        
+    elif casa_low in ["senado", "senado federal"]:
+        pl = db.query(PlSenado).filter(
+            PlSenado.identificacao.ilike(f"%{numero}/{ano}%")
+        ).order_by(PlSenado.updated_at.desc()).first()
+        
+        if not pl:
+            raise HTTPException(status_code=404, detail="Projeto não encontrado")
+            
+        dados_raw = pl.dados_raw or {}
+        
+        autores_nomes = []
+        autores_partidos = []
+        autores_ufs = []
+        for autoria in pl.autorias:
+            if autoria.parlamentar:
+                autores_nomes.append(autoria.parlamentar.nome_eleitoral)
+                if autoria.parlamentar.sigla_partido:
+                    autores_partidos.append(autoria.parlamentar.sigla_partido)
+                if autoria.parlamentar.sigla_uf:
+                    autores_ufs.append(autoria.parlamentar.sigla_uf)
+                    
+        historico = []
+        for t in pl.tramitacoes:
+            historico.append({
+                "data": t.data_tramitacao.strftime("%d/%m/%Y") if t.data_tramitacao else None,
+                "titulo": t.situacao or "Tramitação",
+                "descricao": t.descricao
+            })
+        historico.reverse()
+        
+        situacao_atual = dados_raw.get("situacaoAtual")
+        status_raw = situacao_atual.upper() if situacao_atual else None
+        
+        if status_raw in ["TNJR", "TNJRVETO"]:
+            status_senado = "aprovado"
+        elif not status_raw or status_raw in ["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]:
+            status_senado = "arquivado"
+        else:
+            status_senado = "em_tramitacao"
+
+        return {
+            "numero": str(numero),
+            "ano": ano,
+            "casa": "Senado Federal",
+            "status": status_senado,
+            "regime": None,
+            "data_apresentacao": pl.data_apresentacao.strftime("%d/%m/%Y") if pl.data_apresentacao else None,
+            "autor_nome": autores_nomes[0] if autores_nomes else None,
+            "autor_partido": autores_partidos[0] if autores_partidos else None,
+            "autor_uf": autores_ufs[0] if autores_ufs else None,
+            "ementa": pl.ementa,
+            "estagio_atual": mapear_estagio_atual_senado(dados_raw.get("situacaoAtual")),
+            "url_pdf": dados_raw.get("documento", {}).get("url") if isinstance(dados_raw.get("documento"), dict) else None,
+            "temas": extrair_temas(dados_raw.get("documento", {}).get("indexacao") if isinstance(dados_raw.get("documento"), dict) else None),
+            "historico": historico
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Casa legislativa inválida. Use 'camara' ou 'senado'.")
 
 @router.get("/filtros")
 def listar_filtros(db: Session = Depends(get_db)):

@@ -1,12 +1,7 @@
 {
-  "generated_at": "2026-06-07T06:59:06Z",
+  "generated_at": "2026-06-14T07:17:06Z",
   "repository": "unb-mds/2026-1-Mapa_L.I.L.A.S",
   "issues_per_week": [
-    {
-      "week": "2026-W12",
-      "opened": 1,
-      "closed": 0
-    },
     {
       "week": "2026-W13",
       "opened": 4,
@@ -61,20 +56,25 @@
       "week": "2026-W23",
       "opened": 0,
       "closed": 3
+    },
+    {
+      "week": "2026-W24",
+      "opened": 3,
+      "closed": 9
     }
   ],
   "commit_message_histogram": [
     {
       "range": "0-20",
-      "count": 17
+      "count": 16
     },
     {
       "range": "21-50",
-      "count": 74
+      "count": 81
     },
     {
       "range": "51-100",
-      "count": 72
+      "count": 76
     },
     {
       "range": "101-200",
@@ -86,10 +86,6 @@
     }
   ],
   "coauthors_per_week": [
-    {
-      "week": "2026-W12",
-      "count": 0
-    },
     {
       "week": "2026-W13",
       "count": 0
@@ -132,6 +128,10 @@
     },
     {
       "week": "2026-W23",
+      "count": 0
+    },
+    {
+      "week": "2026-W24",
       "count": 0
     }
   ],
@@ -278,11 +278,6 @@
     },
     {
       "day": 2,
-      "hour": 18,
-      "count": 1
-    },
-    {
-      "day": 2,
       "hour": 20,
       "count": 2
     },
@@ -342,8 +337,23 @@
       "count": 1
     },
     {
+      "day": 3,
+      "hour": 22,
+      "count": 7
+    },
+    {
+      "day": 3,
+      "hour": 23,
+      "count": 1
+    },
+    {
       "day": 4,
       "hour": 2,
+      "count": 1
+    },
+    {
+      "day": 4,
+      "hour": 8,
       "count": 1
     },
     {
@@ -354,6 +364,11 @@
     {
       "day": 4,
       "hour": 20,
+      "count": 1
+    },
+    {
+      "day": 5,
+      "hour": 7,
       "count": 1
     },
     {
@@ -399,7 +414,7 @@
     {
       "day": 6,
       "hour": 6,
-      "count": 3
+      "count": 4
     },
     {
       "day": 6,
@@ -446,12 +461,12 @@
     {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
-      "commits": 71
+      "commits": 73
     },
     {
       "username": "schetinger",
       "name": "Rafael Schetinger",
-      "commits": 28
+      "commits": 33
     },
     {
       "username": "devEduardoReis",
@@ -459,14 +474,14 @@
       "commits": 20
     },
     {
+      "username": "github-actions[bot]",
+      "name": "github-actions[bot]",
+      "commits": 18
+    },
+    {
       "username": "Lulu-souza",
       "name": "Lulu-souza",
       "commits": 15
-    },
-    {
-      "username": "github-actions[bot]",
-      "name": "github-actions[bot]",
-      "commits": 14
     },
     {
       "username": "alice-mariano",
@@ -481,7 +496,7 @@
     {
       "username": "RochaCarla",
       "name": "Carla Rocha",
-      "commits": 2
+      "commits": 1
     },
     {
       "username": "Carla Rocha",
@@ -501,13 +516,13 @@
       "prs_opened": 5
     },
     {
-      "username": "devEduardoReis",
-      "name": "devEduardoReis",
-      "prs_opened": 3
-    },
-    {
       "username": "schetinger",
       "name": "Rafael Schetinger",
+      "prs_opened": 4
+    },
+    {
+      "username": "devEduardoReis",
+      "name": "devEduardoReis",
       "prs_opened": 3
     },
     {
@@ -525,6 +540,13 @@
       "total": 39
     },
     {
+      "username": "schetinger",
+      "name": "Rafael Schetinger",
+      "opened": 13,
+      "closed": 9,
+      "total": 22
+    },
+    {
       "username": "Alice-Moura-13",
       "name": "Alice-Moura-13",
       "opened": 20,
@@ -537,13 +559,6 @@
       "opened": 11,
       "closed": 3,
       "total": 14
-    },
-    {
-      "username": "schetinger",
-      "name": "Rafael Schetinger",
-      "opened": 10,
-      "closed": 0,
-      "total": 10
     },
     {
       "username": "Lulu-souza",

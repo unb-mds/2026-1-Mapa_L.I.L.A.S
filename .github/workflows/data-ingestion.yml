@@ -2,11 +2,17 @@ name: Ingestão de Dados Diária
 
 on:
   schedule:
-    - cron: '33 3 * * *'
+    - cron: '57 2 * * 2-6'  # Seg-Sex 23:57 BRT (Ter-Sáb UTC)
   workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   ingestion:
@@ -43,7 +49,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/ingestion/ingestion-history.json
-          git commit -m "chore: atualiza histórico de ingestão [skip ci]" || echo "Nenhuma mudança no histórico"
+          git commit -m "chore: atualiza histórico de ingestão" || echo "Nenhuma mudança no histórico"
           git push
 
       - name: Upload execution report
@@ -52,3 +58,49 @@ jobs:
           name: ingestion-report
           path: backend/ingestion-report.json
           retention-days: 90
+
+  deploy-pages:
+    needs: ingestion
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install MkDocs
+        run: pip install mkdocs-material
+
+      - name: Build site
+        run: mkdocs build
+
+      - name: Incluir dashboards no site
+        run: |
+          if [ -d "docs/scrum" ]; then
+            cp -r docs/scrum site/scrum
+          else
+            echo "docs/scrum não encontrada — pulando."
+          fi
+          if [ -d "docs/ingestion" ]; then
+            cp -r docs/ingestion site/ingestion
+          else
+            echo "docs/ingestion não encontrada — pulando."
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

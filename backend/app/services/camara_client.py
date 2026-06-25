@@ -38,10 +38,13 @@ def _get(path: str, params: Optional[dict] = None) -> Optional[dict[str, Any]]:
         logger.warning("Câmara API indisponível [%s]: %s", url, exc)
         return None
 
+from datetime import date, timedelta
+
 def listar_proposicoes(
     sigla_tipo: str,
     keyword: str,
     ano_inicial: Optional[int] = None,
+    numdias: Optional[int] = None,
 ) -> Iterator[dict[str, Any]]:
     pagina = 1
     while True:
@@ -56,6 +59,9 @@ def listar_proposicoes(
         }
         if ano_inicial:
             params["dataApresentacaoInicio"] = f"{ano_inicial}-01-01"
+        elif numdias is not None:
+            data_inicio = (date.today() - timedelta(days=numdias)).isoformat()
+            params["dataInicio"] = data_inicio
 
         raw = _get("/proposicoes", params)
         if not raw:
