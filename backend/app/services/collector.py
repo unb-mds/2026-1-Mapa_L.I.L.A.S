@@ -57,8 +57,9 @@ def coletar_camara(session: Session, ano_inicial: Optional[int] = None, numdias:
                     continue
 
                 # 4. Se passou pelo filtro, segue a coleta normal
-                detalhe_raw = camara_client.buscar_detalhe(pl_id)
-                id_salvo = upsert_pl_camara(session, item_raw, detalhe_raw, item_raw)
+                detalhe_raw = camara_client.buscar_detalhe(pl_id) or {}
+                dados_enriquecidos = {**item_raw, **detalhe_raw}
+                id_salvo = upsert_pl_camara(session, item_raw, detalhe_raw, dados_enriquecidos)
                 if not id_salvo:
                     continue
 
@@ -112,12 +113,17 @@ def coletar_senado(
                     continue
 
                 # 2. Se passou pelo filtro, segue a coleta normal
-                id_salvo = upsert_pl_senado(session, item_raw, item_raw)
+                id_materia = item_raw.get("id")
+                if not id_materia:
+                    continue
+                    
+                detalhe_raw = senado_client.buscar_detalhe(id_materia) or {}
+                dados_enriquecidos = {**item_raw, **detalhe_raw}
+                
+                id_salvo = upsert_pl_senado(session, item_raw, dados_enriquecidos)
                 if not id_salvo:
                     continue
 
-                detalhe_raw = senado_client.buscar_detalhe(id_salvo)
-                
                 if detalhe_raw:
                     upsert_autores_senado(session, id_salvo, detalhe_raw)
                     upsert_tramitacoes_senado(session, id_salvo, detalhe_raw)
