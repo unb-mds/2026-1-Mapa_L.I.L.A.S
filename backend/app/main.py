@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import projeto
+from app.routers import projeto, graficos
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
@@ -16,6 +16,10 @@ app.add_middleware(
 
 # Registra as rotas que criamos
 app.include_router(projeto.router)
+# Registra as rotas de gráficos usadas pelo Dashboard Detalhado.
+app.include_router(graficos.router)
+
+
 @app.get("/")
 def read_root():
     return {"status": "API L.I.L.A.S. Online"}
