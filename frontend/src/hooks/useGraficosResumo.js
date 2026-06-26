@@ -1,27 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchGraficosResumo } from '../services/api';
 
 export function useGraficosResumo() {
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const carregar = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchGraficosResumo();
-      setDados(data);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [trigger, setTrigger] = useState(0);
 
   useEffect(() => {
-    carregar();
-  }, [carregar]);
+    let cancelado = false;
 
-  return { dados, loading, error, recarregar: carregar };
+    async function carregar() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchGraficosResumo();
+        if (!cancelado) setDados(data);
+      } catch (e) {
+        if (!cancelado) setError(e.message);
+      } finally {
+        if (!cancelado) setLoading(false);
+      }
+    }
+
+    carregar();
+    return () => { cancelado = true; };
+  }, [trigger]);
+
+  return { dados, loading, error, recarregar: () => setTrigger((t) => t + 1) };
 }
