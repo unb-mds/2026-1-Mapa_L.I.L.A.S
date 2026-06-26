@@ -13,6 +13,7 @@ Uso no FastAPI (importar session):
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 from app.models import Base
 
@@ -21,7 +22,9 @@ DATABASE_URL = os.environ.get(
     "postgresql://postgres:suasenha@db:5432/mapa_lilas",
 )
 
-engine = create_engine(DATABASE_URL, echo=False)
+# NullPool: correto para ambientes serverless (Vercel).
+# Cada requisição abre/fecha sua própria conexão; o pooling real fica no pgbouncer do Neon.
+engine = create_engine(DATABASE_URL, echo=False, poolclass=NullPool)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
