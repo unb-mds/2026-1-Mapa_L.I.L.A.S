@@ -20,7 +20,7 @@ export default function GraficoColunas({ dados, chartRef }) {
           <Tooltip
             cursor={{ fill: '#F3F0FF' }}
             contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '13px' }}
-            formatter={(value, name) => [value.toLocaleString('pt-BR'), 'PLs']}
+            formatter={(value) => [value.toLocaleString('pt-BR'), 'PLs']}
           />
           <Bar dataKey="total" fill="#5B4FCF" radius={[4, 4, 0, 0]} isAnimationActive={true} />
         </BarChart>

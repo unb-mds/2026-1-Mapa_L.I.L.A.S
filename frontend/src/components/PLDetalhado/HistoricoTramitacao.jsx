@@ -2,11 +2,10 @@ import { useState } from 'react';
 
 const LIMITE_INICIAL = 5;
 
-export default function HistoricoTramitacao({ historico, estagioAtual }) {
+export default function HistoricoTramitacao({ historico }) {
   const [verTodos, setVerTodos] = useState(false);
   const semDados = !historico || historico.length === 0;
 
-  // Mostra só os 10 primeiros ou todos, dependendo do estado
   const eventosMostrados = verTodos ? historico : historico?.slice(0, LIMITE_INICIAL);
   const temMais = historico && historico.length > LIMITE_INICIAL;
 
@@ -38,7 +37,6 @@ export default function HistoricoTramitacao({ historico, estagioAtual }) {
             ))}
           </div>
 
-          {/* Botão Ver mais / Ver menos */}
           {temMais && (
             <div className="mt-6 flex justify-center">
               <button
@@ -46,7 +44,7 @@ export default function HistoricoTramitacao({ historico, estagioAtual }) {
                 className="text-sm font-semibold text-[#5B4FCF] hover:text-[#4338CA] transition-colors border border-[#5B4FCF] rounded-lg px-4 py-2 hover:bg-purple-50"
               >
                 {verTodos
-                  ? `Ver menos`
+                  ? 'Ver menos'
                   : `Ver mais (${historico.length - LIMITE_INICIAL} etapas restantes)`}
               </button>
             </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchProjetos, fetchFiltros } from '../services/api';
 
 const FILTROS_INICIAL = {
@@ -20,43 +20,50 @@ export function useProjetosLei() {
   const [metaFiltros, setMetaFiltros] = useState({ partidos: [], ufs: [], anos: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [trigger, setTrigger] = useState(0);
 
-  const carregarFiltros = useCallback(async () => {
-    try {
-      const data = await fetchFiltros();
-      setMetaFiltros(data);
-    } catch (e) {
-      console.error('Erro ao carregar metadados dos filtros:', e);
+  // Carrega metadados dos filtros uma única vez
+  useEffect(() => {
+    let cancelado = false;
+    async function carregarFiltros() {
+      try {
+        const data = await fetchFiltros();
+        if (!cancelado) setMetaFiltros(data);
+      } catch (e) {
+        console.error('Erro ao carregar metadados dos filtros:', e);
+      }
     }
+    carregarFiltros();
+    return () => { cancelado = true; };
   }, []);
 
-  const carregarProjetos = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchProjetos({
-        ...filtrosAplicados,
-        page,
-        per_page: 6,
-        ordenar,
-      });
-      setProjetos(data.projetos);
-      setTotal(data.total);
-      setTotalPages(data.total_pages);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
+  // Carrega projetos sempre que filtros, página, ordenação ou trigger mudam
+  useEffect(() => {
+    let cancelado = false;
+    async function carregarProjetos() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchProjetos({
+          ...filtrosAplicados,
+          page,
+          per_page: 6,
+          ordenar,
+        });
+        if (!cancelado) {
+          setProjetos(data.projetos);
+          setTotal(data.total);
+          setTotalPages(data.total_pages);
+        }
+      } catch (e) {
+        if (!cancelado) setError(e.message);
+      } finally {
+        if (!cancelado) setLoading(false);
+      }
     }
-  }, [filtrosAplicados, page, ordenar]);
-
-  useEffect(() => {
-    carregarFiltros();
-  }, [carregarFiltros]);
-
-  useEffect(() => {
     carregarProjetos();
-  }, [carregarProjetos]);
+    return () => { cancelado = true; };
+  }, [filtrosAplicados, page, ordenar, trigger]);
 
   const aplicarFiltros = () => {
     setFiltrosAplicados({ ...filtros });
@@ -84,6 +91,6 @@ export function useProjetosLei() {
     error,
     aplicarFiltros,
     limparFiltros,
-    recarregar: carregarProjetos,
+    recarregar: () => setTrigger((t) => t + 1),
   };
 }
