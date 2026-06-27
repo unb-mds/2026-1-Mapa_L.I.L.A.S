@@ -12,14 +12,10 @@ function SkeletonGraficos() {
       <div className="h-8 bg-gray-200 rounded w-96 mb-2" />
       <div className="h-4 bg-gray-200 rounded w-72 mb-8" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="flex flex-col gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 h-44" />
-          <div className="bg-white border border-gray-200 rounded-xl p-6 h-32" />
-        </div>
-        <div className="flex flex-col gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-5 h-56" />
-          <div className="bg-white border border-gray-200 rounded-xl p-5 h-52" />
-        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-6 h-64" />
+        <div className="bg-white border border-gray-200 rounded-xl p-5 h-64" />
+        <div className="bg-white border border-gray-200 rounded-xl p-6 h-64" />
+        <div className="bg-white border border-gray-200 rounded-xl p-5 h-64" />
       </div>
     </div>
   );
@@ -60,18 +56,21 @@ export default function Graficos() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Coluna esquerda */}
-              <div className="flex flex-col gap-6">
+            {/* Grid 2x2 com todas as células de altura igual */}
+            <div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+              style={{ gridAutoRows: '1fr' }}
+            >
+              <div className="h-full">
                 <CardParlamentaresAtivos parlamentares={dados.parlamentares_ativos} />
-                <div className="flex-1">
-                  <CardTempoTramitacao dados={dados.tempo_medio_tramitacao} />
-                </div>
               </div>
-
-              {/* Coluna direita */}
-              <div className="flex flex-col gap-6">
+              <div className="h-full">
                 <CardTopEstados estados={dados.top_estados} />
+              </div>
+              <div className="h-full">
+                <CardTempoTramitacao dados={dados.tempo_medio_tramitacao} />
+              </div>
+              <div className="h-full">
                 <CardCTADashboard />
               </div>
             </div>
