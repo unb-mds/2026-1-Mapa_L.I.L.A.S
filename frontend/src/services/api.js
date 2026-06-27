@@ -96,3 +96,19 @@ export async function fetchDashboard(params = {}) {
   if (!response.ok) throw new Error('Erro ao buscar dados do dashboard');
   return response.json();
 }
+
+export async function fetchStats() {
+  const [total, emTramitacao, aprovados, arquivados] = await Promise.all([
+    fetch(`${BASE_URL}/api/projetos-de-lei?per_page=1`).then(r => r.json()),
+    fetch(`${BASE_URL}/api/projetos-de-lei?status=em_tramitacao&per_page=1`).then(r => r.json()),
+    fetch(`${BASE_URL}/api/projetos-de-lei?status=aprovado&per_page=1`).then(r => r.json()),
+    fetch(`${BASE_URL}/api/projetos-de-lei?status=arquivado&per_page=1`).then(r => r.json()),
+  ]);
+
+  return {
+    total: total.total,
+    em_tramitacao: emTramitacao.total,
+    aprovados: aprovados.total,
+    arquivados: arquivados.total,
+  };
+}

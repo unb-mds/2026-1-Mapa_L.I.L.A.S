@@ -47,7 +47,6 @@ export default function Dashboard() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
         <BreadcrumbDashboard />
 
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 uppercase mb-1">
             Painel de Dados Legislativos
@@ -58,20 +57,16 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Seletor Comparar por */}
         <SeletorComparar ativo={compararPor} onChange={mudarComparar} />
 
-        {/* Filtros */}
         <FiltrosDashboard
           compararPor={compararPor}
           filtros={filtros}
           onChange={mudarFiltro}
         />
 
-        {/* Cards de indicadores */}
         <CardIndicadores indicadores={dados?.indicadores} loading={loading} />
 
-        {/* Área do gráfico */}
         {error ? (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
             <p className="text-gray-500 text-center text-sm">
@@ -86,7 +81,6 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            {/* Cabeçalho da área do gráfico */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex gap-1">
                 {['colunas', 'pizza'].map((aba) => (
@@ -109,7 +103,6 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Título e data */}
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-base font-semibold text-gray-800">
                 Distribuição de PLs por {LABELS_DIMENSAO[compararPor]}
@@ -121,7 +114,6 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Gráfico */}
             {loading ? (
               <SkeletonGrafico />
             ) : !dados?.dados?.length ? (
@@ -133,7 +125,11 @@ export default function Dashboard() {
             ) : abaAtiva === 'colunas' ? (
               <GraficoColunas dados={dados.dados} chartRef={chartRef} />
             ) : (
-              <GraficoPizza dados={dados.dados} chartRef={chartRef} />
+              <GraficoPizza
+                dados={dados.dados}
+                chartRef={chartRef}
+                compararPor={compararPor}
+              />
             )}
           </div>
         )}

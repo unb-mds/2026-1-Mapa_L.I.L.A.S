@@ -1,28 +1,32 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchPLDetalhado } from '../services/api';
 
 export function usePLDetalhado(casa, numero, ano) {
   const [pl, setPL] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const carregar = useCallback(async () => {
-    if (!casa || !numero || !ano) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchPLDetalhado(casa, numero, ano);
-      setPL(data);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [casa, numero, ano]);
+  const [trigger, setTrigger] = useState(0);
 
   useEffect(() => {
-    carregar();
-  }, [carregar]);
+    if (!casa || !numero || !ano) return;
+    let cancelado = false;
 
-  return { pl, loading, error, recarregar: carregar };
+    async function carregar() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchPLDetalhado(casa, numero, ano);
+        if (!cancelado) setPL(data);
+      } catch (e) {
+        if (!cancelado) setError(e.message);
+      } finally {
+        if (!cancelado) setLoading(false);
+      }
+    }
+
+    carregar();
+    return () => { cancelado = true; };
+  }, [casa, numero, ano, trigger]);
+
+  return { pl, loading, error, recarregar: () => setTrigger((t) => t + 1) };
 }
