@@ -27,7 +27,10 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
+from sqlalchemy.types import JSON
+
+JSONB = PG_JSONB().with_variant(JSON, "sqlite")
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 

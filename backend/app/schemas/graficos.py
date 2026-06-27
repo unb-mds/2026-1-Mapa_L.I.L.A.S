@@ -31,3 +31,27 @@ class DistribuicaoResponse(BaseModel):
     data_atualizacao: str
     indicadores: IndicadoresDistribuicao
     dados: list[ItemDistribuicao]
+
+
+class TempoMedioTramitacao(BaseModel):
+    dias: int
+
+
+class TopEstado(BaseModel):
+    estado: str
+    uf: str
+    total_pls: int
+
+
+class ParlamentarAtivo(BaseModel):
+    nome: str
+    iniciais: str
+    descricao: str
+    uf: str
+    total_propostas: int
+
+
+class ResumoResponse(BaseModel):
+    tempo_medio_tramitacao: TempoMedioTramitacao
+    top_estados: list[TopEstado]
+    parlamentares_ativos: list[ParlamentarAtivo]

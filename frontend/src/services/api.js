@@ -4,9 +4,9 @@ import { mockGraficosResumo } from '../mocks/graficosResumo';
 import { MOCK_POR_DIMENSAO } from '../mocks/dashboard';
 
 const USE_MOCK = false;
-const USE_MOCK_GRAFICOS = true;
-const USE_MOCK_DASHBOARD = true;
-const BASE_URL = 'http://localhost:8000';
+const USE_MOCK_GRAFICOS = false;
+const USE_MOCK_DASHBOARD = false;
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export async function fetchProjetos(params = {}) {
   if (USE_MOCK) {
