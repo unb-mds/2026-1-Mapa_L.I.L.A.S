@@ -9,6 +9,15 @@ Este diretório contém o código-fonte da API (FastAPI) do projeto Mapa L.I.L.A
 
 ---
 
+## Stack Tecnológica e Decisões (ADRs)
+
+- **FastAPI:** Escolhido por oferecer validação automática de inputs (Pydantic v2), suporte nativo a operações assíncronas (essencial para chamadas paralelas de APIs externas) e geração automática de documentação (OpenAPI/Swagger).
+- **PostgreSQL:** Banco de dados relacional utilizado para persistência. Adota o uso estratégico da coluna `JSONB` (`dados_raw`) para armazenar respostas brutas das APIs externas, conferindo flexibilidade para lidar com formatos de dados diferentes entre a Câmara e o Senado, mantendo colunas normalizadas para dados essenciais.
+- **Orquestração de APIs (Escopo):** O Backend funciona como um agregador. Ele centraliza as consultas às APIs da Câmara e Senado, abstraindo e padronizando as diferenças de formato de ambas antes de fornecer dados limpos ao Frontend.
+- **Classificação com NLP:** Como as APIs originais não possuem filtros exatos de tema confiáveis para nosso escopo, o Backend aplica técnicas de NLP (Processamento de Linguagem Natural) e Regex para analisar o texto e ementa dos PLs, identificando automaticamente projetos de lei pertinentes a direitos da mulher, feminicídio e correlatos.
+
+---
+
 ## Configuração do Ambiente Local
 
 Recomendamos o uso de ambiente virtual (`.venv`) para isolar as dependências do projeto.
