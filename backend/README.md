@@ -18,6 +18,26 @@ Este diretório contém o código-fonte da API (FastAPI) do projeto Mapa L.I.L.A
 
 ---
 
+## Estrutura de Pastas
+
+```text
+backend/
+├── app/                  # Código principal da aplicação
+│   ├── migrations/       # Scripts de migração do banco de dados (Alembic)
+│   ├── routers/          # Endpoints da API (Controllers)
+│   ├── schemas/          # Modelos Pydantic para validação de dados
+│   ├── services/         # Regras de negócio, classificação NLP e integrações externas
+│   ├── database.py       # Configuração de conexão com o PostgreSQL
+│   ├── models.py         # Modelos SQLAlchemy (Mapeamento Objeto-Relacional)
+│   └── main.py           # Ponto de entrada da aplicação FastAPI
+├── tests/                # Suíte de testes automatizados (pytest)
+├── Dockerfile            # Receita para criação da imagem do contêiner
+├── requirements.txt      # Dependências de produção do Python
+└── requirements-dev.txt  # Dependências exclusivas para desenvolvimento e testes
+```
+
+---
+
 ## Configuração do Ambiente Local
 
 Recomendamos o uso de ambiente virtual (`.venv`) para isolar as dependências do projeto.

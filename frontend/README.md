@@ -19,6 +19,27 @@ Este diretório contém a interface de usuário (SPA) do projeto Mapa L.I.L.A.S.
 
 ---
 
+## Estrutura de Pastas
+
+```text
+frontend/
+├── public/               # Arquivos estáticos não processados pelo bundler
+├── src/                  # Código-fonte principal da aplicação
+│   ├── assets/           # Imagens, fontes e recursos visuais
+│   ├── components/       # Componentes React reutilizáveis (Atomic UI)
+│   ├── hooks/            # Custom hooks do React para lógica isolada
+│   ├── mocks/            # Dados estáticos simulados para testes e fallback
+│   ├── pages/            # Componentes estruturais de páginas (Roteamento)
+│   ├── services/         # Módulos de comunicação HTTP com a API do backend
+│   ├── App.jsx           # Componente raiz estrutural do React
+│   └── main.jsx          # Ponto de entrada e injeção do React no DOM
+├── index.html            # Template HTML principal servido ao navegador
+├── package.json          # Configuração de dependências e scripts do NPM
+└── vite.config.js        # Configuração do compilador/bundler Vite
+```
+
+---
+
 ## Configuração do Ambiente Local
 
 ### Pré-requisitos
