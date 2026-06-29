@@ -2,7 +2,7 @@
 
 Este diretório contém a interface de usuário (SPA) do projeto Mapa L.I.L.A.S., uma plataforma para busca, acompanhamento e visualização de proposições legislativas sobre feminicídio e direitos da mulher.
 
-## 🎯 Funcionalidades
+## Funcionalidades
 
 - **Busca Semântica e Filtros:** Busca por proposições legislativas utilizando palavras-chave, filtros por status, datas e tipo de documento.
 - **Cards de Proposições (PLCard):** Exibição padronizada das proposições (Projetos de Lei, PECs, etc.) mostrando o status normalizado (ex: `em_tramitacao`, `aprovado`) e a autoria principal (parlamentar autor).
@@ -19,7 +19,7 @@ Este diretório contém a interface de usuário (SPA) do projeto Mapa L.I.L.A.S.
 
 ---
 
-## 🚀 Configuração do Ambiente Local
+## Configuração do Ambiente Local
 
 ### Pré-requisitos
 - **Node.js** (versão recomendada >= 20.x)
@@ -49,7 +49,7 @@ A aplicação estará acessível em: [http://localhost:5173](http://localhost:51
 
 ---
 
-## 📦 Build para Produção
+## Build para Produção
 
 Para compilar o código em arquivos estáticos minificados e otimizados:
 
@@ -65,7 +65,7 @@ npm run preview
 
 ---
 
-## 🐳 Uso com Docker
+## Uso com Docker
 
 O frontend está incluso na infraestrutura Docker do projeto. Caso deseje rodar a aplicação junto de todo o ecossistema (Backend + Banco de Dados), volte para a pasta raiz do repositório (uma pasta acima do `/frontend`) e rode:
 
