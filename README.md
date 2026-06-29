@@ -47,9 +47,11 @@ O **Mapa L.I.L.A.S.** democratiza o acesso à informação legislativa sobre o c
 
 ## Documentação
 
-- [Git Pages](https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S/)
-- [Figma](https://www.figma.com/board/JerWZI6mxVFXDsDmY6ZMap/Template-MDS--c%C3%B3pia-?node-id=0-1&p=f&t=C2MuRLnn6exwREqu-0)
-- [Produtividade](https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S/scrum/)
+- [Documentação do Backend (API e Banco de Dados)](backend/README.md)
+- [Documentação do Frontend (Interface React)](frontend/README.md)
+- [Git Pages (Docs completas)](https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S/)
+- [Figma (Design)](https://www.figma.com/board/JerWZI6mxVFXDsDmY6ZMap/Template-MDS--c%C3%B3pia-?node-id=0-1&p=f&t=C2MuRLnn6exwREqu-0)
+- [Produtividade e Scrum](https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S/scrum/)
 
 ---
 
