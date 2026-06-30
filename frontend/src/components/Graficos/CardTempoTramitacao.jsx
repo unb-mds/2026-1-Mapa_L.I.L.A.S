@@ -1,11 +1,4 @@
-const BADGE_CONFIG = {
-  aumento: { icone: '↗', bg: 'bg-pink-50', texto: 'text-red-700', sinal: '+' },
-  reducao: { icone: '↘', bg: 'bg-green-50', texto: 'text-green-700', sinal: '-' },
-};
-
 export default function CardTempoTramitacao({ dados }) {
-  const badge = BADGE_CONFIG[dados.tendencia] ?? BADGE_CONFIG.aumento;
-
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 relative flex flex-col h-full">
       {/* Header alinhado à esquerda, igual aos outros cards */}
