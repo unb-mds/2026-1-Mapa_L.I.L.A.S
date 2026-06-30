@@ -1,5 +1,4 @@
 import os
-import pytest
 from unittest.mock import patch, MagicMock
 from app.services.nlp_service import get_dynamic_keywords
 

@@ -1,7 +1,5 @@
 import sys
-import argparse
 import json
-import os
 from popular_banco import parse_args, executar_carga
 
 def test_parse_args_default_incremental(mocker):

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { fetchStats } from '../services/api';
+
+const BASE_URL = 'http://localhost:8000';
 
 export function useStats() {
   const [stats, setStats] = useState({
@@ -11,7 +12,8 @@ export function useStats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats()
+    fetch(`${BASE_URL}/api/projetos-de-lei/stats`)
+      .then(r => r.json())
       .then((data) => {
         setStats({
           total: data.total,

@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch, MagicMock
 from app.services.collector import coletar_camara, coletar_senado
 from app.services import camara_client, senado_client

@@ -27,8 +27,11 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
 from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.types import JSON
+
+JSONB = PG_JSONB().with_variant(JSON, "sqlite")
 
 
 class Base(DeclarativeBase):
@@ -53,10 +56,13 @@ class PlSenado(Base):
     tramitando = Column(Boolean, nullable=True)
     sigla_tipo_deliberacao = Column(String, nullable=True)
     dados_raw = Column(JSONB, nullable=True)                          # ADR-002
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(
+    ), onupdate=func.now(), nullable=False)
 
-    autorias = relationship("AutoriaSenado", back_populates="pl", cascade="all, delete-orphan")
+    autorias = relationship(
+        "AutoriaSenado", back_populates="pl", cascade="all, delete-orphan")
     tramitacoes = relationship("TramitacaoSenado", back_populates="pl", cascade="all, delete-orphan",
                                order_by="TramitacaoSenado.sequencia")
 
@@ -79,10 +85,13 @@ class PlCamara(Base):
     descricao_situacao = Column(String, nullable=True)
     despacho = Column(Text, nullable=True)
     dados_raw = Column(JSONB, nullable=True)                          # ADR-002
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(
+    ), onupdate=func.now(), nullable=False)
 
-    autorias = relationship("AutoriaCamara", back_populates="pl", cascade="all, delete-orphan")
+    autorias = relationship(
+        "AutoriaCamara", back_populates="pl", cascade="all, delete-orphan")
     tramitacoes = relationship("TramitacaoCamara", back_populates="pl", cascade="all, delete-orphan",
                                order_by="TramitacaoCamara.sequencia")
 
@@ -94,24 +103,31 @@ class PlCamara(Base):
 class Parlamentar(Base):
     __tablename__ = "parlamentares"
     __table_args__ = (
-        CheckConstraint("casa IN ('Câmara', 'Senado')", name="ck_parlamentares_casa"),
+        CheckConstraint("casa IN ('Câmara', 'Senado')",
+                        name="ck_parlamentares_casa"),
         CheckConstraint("sexo IN ('F', 'M')", name="ck_parlamentares_sexo"),
     )
 
-    id = Column(String, primary_key=True, nullable=False)             # "cam_141492" ou "sen_5783"
+    # "cam_141492" ou "sen_5783"
+    id = Column(String, primary_key=True, nullable=False)
     casa = Column(String, nullable=False)
     nome_eleitoral = Column(String, nullable=False)
     nome_civil = Column(String, nullable=True)
     sigla_partido = Column(String, nullable=False)
     sigla_uf = Column(String(2), nullable=True)
-    sexo = Column(String(1), nullable=False)                          # "F" ou "M"
+    # "F" ou "M"
+    sexo = Column(String(1), nullable=False)
     url_foto = Column(String, nullable=True)
     status_mandato = Column(String, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(
+    ), onupdate=func.now(), nullable=False)
 
-    autorias_camara = relationship("AutoriaCamara", back_populates="parlamentar")
-    autorias_senado = relationship("AutoriaSenado", back_populates="parlamentar")
+    autorias_camara = relationship(
+        "AutoriaCamara", back_populates="parlamentar")
+    autorias_senado = relationship(
+        "AutoriaSenado", back_populates="parlamentar")
 
 
 # ---------------------------------------------------------------------------
@@ -121,8 +137,10 @@ class Parlamentar(Base):
 class AutoriaCamara(Base):
     __tablename__ = "autoria_camara"
 
-    id_pl = Column(Integer, ForeignKey("pls_camara.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    id_parlamentar = Column(String, ForeignKey("parlamentares.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    id_pl = Column(Integer, ForeignKey("pls_camara.id",
+                   ondelete="CASCADE"), primary_key=True, nullable=False)
+    id_parlamentar = Column(String, ForeignKey(
+        "parlamentares.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     tipo_autoria = Column(String, nullable=True)
 
     pl = relationship("PlCamara", back_populates="autorias")
@@ -132,8 +150,10 @@ class AutoriaCamara(Base):
 class AutoriaSenado(Base):
     __tablename__ = "autoria_senado"
 
-    id_pl = Column(Integer, ForeignKey("pls_senado.id", ondelete="CASCADE"), primary_key=True, nullable=False)
-    id_parlamentar = Column(String, ForeignKey("parlamentares.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    id_pl = Column(Integer, ForeignKey("pls_senado.id",
+                   ondelete="CASCADE"), primary_key=True, nullable=False)
+    id_parlamentar = Column(String, ForeignKey(
+        "parlamentares.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     tipo_autoria = Column(String, nullable=True)
 
     pl = relationship("PlSenado", back_populates="autorias")
@@ -148,14 +168,16 @@ class TramitacaoSenado(Base):
     __tablename__ = "tramitacao_senado"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    id_pl = Column(Integer, ForeignKey("pls_senado.id", ondelete="CASCADE"), nullable=False)
+    id_pl = Column(Integer, ForeignKey("pls_senado.id",
+                   ondelete="CASCADE"), nullable=False)
     data_tramitacao = Column(Date, nullable=True)
     situacao = Column(String, nullable=True)
     descricao = Column(Text, nullable=True)
     local = Column(String, nullable=True)
     sequencia = Column(Integer, nullable=True)
     dados_raw = Column(JSONB, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
 
     pl = relationship("PlSenado", back_populates="tramitacoes")
 
@@ -164,13 +186,15 @@ class TramitacaoCamara(Base):
     __tablename__ = "tramitacao_camara"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    id_pl = Column(Integer, ForeignKey("pls_camara.id", ondelete="CASCADE"), nullable=False)
+    id_pl = Column(Integer, ForeignKey("pls_camara.id",
+                   ondelete="CASCADE"), nullable=False)
     data_tramitacao = Column(DateTime(timezone=True), nullable=True)
     situacao = Column(String, nullable=True)
     descricao = Column(Text, nullable=True)
     local = Column(String, nullable=True)
     sequencia = Column(Integer, nullable=True)
     dados_raw = Column(JSONB, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
 
     pl = relationship("PlCamara", back_populates="tramitacoes")
