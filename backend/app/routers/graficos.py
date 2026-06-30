@@ -12,10 +12,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.graficos import DistribuicaoResponse, ResumoResponse
 from app.services.graficos import obter_distribuicao, obter_resumo
-from cachetools import TTLCache
-
-cache_resumo = TTLCache(maxsize=2, ttl=43200)
-cache_distribuicao = TTLCache(maxsize=100, ttl=43200)
+from app.cache import cache_resumo, cache_distribuicao
 
 
 # Router separado para manter responsabilidades de gráficos fora de projeto.py.
