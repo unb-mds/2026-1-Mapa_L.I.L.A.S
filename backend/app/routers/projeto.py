@@ -371,6 +371,78 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
         }
     else:
         raise HTTPException(status_code=400, detail="Casa legislativa inválida. Use 'camara' ou 'senado'.")
+    
+@router.get("/stats")
+def obter_stats(db: Session = Depends(get_db)):
+    # Reutiliza a mesma lógica de deduplicação do listar_projetos
+    subq_camara = (
+        select(TramitacaoCamara.id_pl, func.max(TramitacaoCamara.data_tramitacao).label("ultima_atualizacao"))
+        .group_by(TramitacaoCamara.id_pl)
+        .subquery()
+    )
+    subq_senado = (
+        select(TramitacaoSenado.id_pl, func.max(TramitacaoSenado.data_tramitacao).label("ultima_atualizacao"))
+        .group_by(TramitacaoSenado.id_pl)
+        .subquery()
+    )
+
+    status_camara = case(
+        (PlCamara.descricao_situacao == "Transformado em Norma Jurídica", "aprovado"),
+        (PlCamara.descricao_situacao == "Arquivada", "arquivado"),
+        else_="em_tramitacao"
+    ).label("status_normalizado")
+
+    query_camara = (
+        select(
+            func.cast(PlCamara.numero, String).label("numero"),
+            func.cast(PlCamara.ano, String).label("ano"),
+            func.coalesce(subq_camara.c.ultima_atualizacao, PlCamara.updated_at).label("ultima_atualizacao"),
+            status_camara
+        )
+        .outerjoin(subq_camara, subq_camara.c.id_pl == PlCamara.id)
+    )
+
+    numero_senado = func.substring(PlSenado.identificacao, '([0-9]+)/')
+    ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+
+    status_senado = case(
+        (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
+        (or_(situacao_atual_senado.in_(["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]), situacao_atual_senado.is_(None), situacao_atual_senado == 'NULL', situacao_atual_senado == ''), "arquivado"),
+        else_="em_tramitacao"
+    ).label("status_normalizado")
+
+    query_senado = (
+        select(
+            func.cast(func.nullif(numero_senado, ''), String).label("numero"),
+            func.cast(func.nullif(ano_senado, ''), String).label("ano"),
+            func.coalesce(subq_senado.c.ultima_atualizacao, PlSenado.updated_at).label("ultima_atualizacao"),
+            status_senado
+        )
+        .outerjoin(subq_senado, subq_senado.c.id_pl == PlSenado.id)
+    )
+
+    union_subq = query_camara.union_all(query_senado).subquery()
+
+    rn_col = func.row_number().over(
+        partition_by=(union_subq.c.numero, union_subq.c.ano),
+        order_by=union_subq.c.ultima_atualizacao.desc().nullslast()
+    ).label('rn')
+
+    dedup_subq = select(union_subq, rn_col).subquery()
+    final_query = select(dedup_subq).where(dedup_subq.c.rn == 1).subquery()
+
+    total = db.execute(select(func.count()).select_from(final_query)).scalar()
+    em_tramitacao = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "em_tramitacao")).scalar()
+    aprovados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "aprovado")).scalar()
+    arquivados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "arquivado")).scalar()
+
+    return {
+        "total": total,
+        "em_tramitacao": em_tramitacao,
+        "aprovados": aprovados,
+        "arquivados": arquivados,
+    }
 
 @router.get("/filtros")
 def listar_filtros(db: Session = Depends(get_db)):
