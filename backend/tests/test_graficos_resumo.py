@@ -2,11 +2,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pytest
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
 from app.main import app
 from app.database import get_db, Base
-from app.models import PlCamara, PlSenado, Parlamentar, AutoriaCamara, TramitacaoCamara
+from app.models import PlCamara, Parlamentar, AutoriaCamara, TramitacaoCamara
 
 # Setup test DB
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"

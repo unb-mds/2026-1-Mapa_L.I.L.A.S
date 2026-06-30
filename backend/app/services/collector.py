@@ -4,14 +4,10 @@ app/services/collector.py
 Orquestrador de coleta: coordena clientes HTTP → schemas → normalizer → banco.
 """
 
-import asyncio
 import logging
-from datetime import date
 from typing import Optional
-import time
 from sqlalchemy.orm import Session
 
-from app import services  
 from app.services import camara_client, senado_client
 from app.services.normalizer import (
     upsert_autores_camara,

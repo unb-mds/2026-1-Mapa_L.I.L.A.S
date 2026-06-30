@@ -63,7 +63,8 @@ def _base_proposicoes():
         select(
             literal("camara").label("casa"),
             PlCamara.id.label("id_pl"),
-            func.concat(literal("camara:"), cast(PlCamara.id, String)).label("proposicao_id"),
+            func.concat(literal("camara:"), cast(
+                PlCamara.id, String)).label("proposicao_id"),
             PlCamara.data_apresentacao.label("data_apresentacao"),
             PlCamara.updated_at.label("data_atualizacao"),
             Parlamentar.sigla_partido.label("partido"),
@@ -78,7 +79,8 @@ def _base_proposicoes():
         select(
             literal("senado").label("casa"),
             PlSenado.id.label("id_pl"),
-            func.concat(literal("senado:"), cast(PlSenado.id, String)).label("proposicao_id"),
+            func.concat(literal("senado:"), cast(
+                PlSenado.id, String)).label("proposicao_id"),
             PlSenado.data_apresentacao.label("data_apresentacao"),
             PlSenado.updated_at.label("data_atualizacao"),
             Parlamentar.sigla_partido.label("partido"),
@@ -117,7 +119,8 @@ def _aplicar_filtros(query, base, comparar_por: str, filtros: dict):
             query = query.where(base.c.sexo == sexo)
 
     if mes and comparar_por != "mes":
-        query = query.where(cast(func.extract("month", base.c.data_apresentacao), Integer) == mes)
+        query = query.where(
+            cast(func.extract("month", base.c.data_apresentacao), Integer) == mes)
 
     return query
 
@@ -162,10 +165,12 @@ def _agregar_por_dimensao(db: Session, base, comparar_por: str, filtros: dict):
 
     label_col = _coluna_agrupamento(base, comparar_por).label("label")
 
-    query = select(label_col, func.count(func.distinct(base.c.proposicao_id)).label("total")).select_from(base)
+    query = select(label_col, func.count(func.distinct(
+        base.c.proposicao_id)).label("total")).select_from(base)
     query = _aplicar_filtros(query, base, comparar_por, filtros)
     query = _aplicar_label_preenchido(query, label_col, comparar_por)
-    query = query.group_by(label_col).order_by(func.count(func.distinct(base.c.proposicao_id)).desc())
+    query = query.group_by(label_col).order_by(
+        func.count(func.distinct(base.c.proposicao_id)).desc())
 
     dados = []
     for row in db.execute(query).all():
@@ -178,7 +183,8 @@ def _agregar_por_dimensao(db: Session, base, comparar_por: str, filtros: dict):
 def _total_pls(db: Session, base, comparar_por: str, filtros: dict) -> int:
     """Calcula o total de registros considerados após os filtros válidos."""
 
-    query = select(func.count(func.distinct(base.c.proposicao_id))).select_from(base)
+    query = select(func.count(func.distinct(
+        base.c.proposicao_id))).select_from(base)
     query = _aplicar_filtros(query, base, comparar_por, filtros)
     return db.execute(query).scalar() or 0
 
@@ -187,10 +193,12 @@ def _mais_ativo(db: Session, base, comparar_por: str, filtros: dict, campo: str)
     """Calcula o partido ou estado com mais propostas após os filtros."""
 
     label_col = func.upper(getattr(base.c, campo)).label("label")
-    query = select(label_col, func.count(func.distinct(base.c.proposicao_id)).label("total")).select_from(base)
+    query = select(label_col, func.count(func.distinct(
+        base.c.proposicao_id)).label("total")).select_from(base)
     query = _aplicar_filtros(query, base, comparar_por, filtros)
     query = query.where(label_col.isnot(None), label_col != "")
-    query = query.group_by(label_col).order_by(func.count(func.distinct(base.c.proposicao_id)).desc()).limit(1)
+    query = query.group_by(label_col).order_by(func.count(
+        func.distinct(base.c.proposicao_id)).desc()).limit(1)
 
     row = db.execute(query).first()
     return row.label if row else None
@@ -215,7 +223,8 @@ def obter_distribuicao(
     """Orquestra todos os cálculos exigidos por GET /api/graficos/distribuicao."""
 
     base = _base_proposicoes()
-    filtros = {"estado": estado, "partido": partido, "genero": genero, "mes": mes}
+    filtros = {"estado": estado, "partido": partido,
+               "genero": genero, "mes": mes}
 
     return {
         "comparar_por": comparar_por,
@@ -228,49 +237,54 @@ def obter_distribuicao(
         "dados": _agregar_por_dimensao(db, base, comparar_por, filtros),
     }
 
+
 def obter_resumo(db: Session) -> dict:
     from app.models import TramitacaoCamara, TramitacaoSenado
     from datetime import datetime
-    
+
     # 1. Tempo Médio (Apenas Sancionados)
     query_camara = db.execute(
-        select(PlCamara.data_apresentacao, func.max(TramitacaoCamara.data_tramitacao))
+        select(PlCamara.data_apresentacao, func.max(
+            TramitacaoCamara.data_tramitacao))
         .outerjoin(TramitacaoCamara, TramitacaoCamara.id_pl == PlCamara.id)
         .where(PlCamara.descricao_situacao == "Transformado em Norma Jurídica")
         .group_by(PlCamara.id)
     ).all()
-    
+
     query_senado = db.execute(
-        select(PlSenado.data_apresentacao, func.max(TramitacaoSenado.data_tramitacao))
+        select(PlSenado.data_apresentacao, func.max(
+            TramitacaoSenado.data_tramitacao))
         .outerjoin(TramitacaoSenado, TramitacaoSenado.id_pl == PlSenado.id)
         .where(PlSenado.dados_raw['situacaoAtual'].astext.in_(['TNJR', 'TNJRVETO']))
         .group_by(PlSenado.id)
     ).all()
-    
+
     soma_dias = 0
     total_pls_tempo = 0
     hoje = datetime.now()
-    
+
     for dt_apresentacao, max_tramitacao in query_camara + query_senado:
-        if not dt_apresentacao: continue
+        if not dt_apresentacao:
+            continue
         dt_fim = max_tramitacao or hoje
-        
-        dt_a = dt_apresentacao.date() if isinstance(dt_apresentacao, datetime) else dt_apresentacao
+
+        dt_a = dt_apresentacao.date() if isinstance(
+            dt_apresentacao, datetime) else dt_apresentacao
         dt_f = dt_fim.date() if isinstance(dt_fim, datetime) else dt_fim
-        
+
         dias = max(0, (dt_f - dt_a).days)
         soma_dias += dias
         total_pls_tempo += 1
-            
+
     dias_medios = soma_dias // total_pls_tempo if total_pls_tempo else 0
-    
+
     # 2. Top Estados
     base = _base_proposicoes()
     query_estados = select(
         func.upper(base.c.estado).label("uf"),
         func.count(func.distinct(base.c.proposicao_id)).label("total_pls")
     ).where(base.c.estado.isnot(None), base.c.estado != "").group_by(func.upper(base.c.estado)).order_by(func.count(func.distinct(base.c.proposicao_id)).desc()).limit(5)
-    
+
     mapa_estados = {
         "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal",
         "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul",
@@ -278,7 +292,7 @@ def obter_resumo(db: Session) -> dict:
         "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
         "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
     }
-    
+
     top_estados = []
     for row in db.execute(query_estados).all():
         top_estados.append({
@@ -286,7 +300,7 @@ def obter_resumo(db: Session) -> dict:
             "uf": row.uf,
             "total_pls": row.total_pls
         })
-        
+
     # 3. Parlamentares Ativos
     camara_parl = select(
         Parlamentar.nome_eleitoral.label("nome"),
@@ -296,7 +310,7 @@ def obter_resumo(db: Session) -> dict:
         literal("Câmara").label("casa"),
         func.count(func.distinct(AutoriaCamara.id_pl)).label("total")
     ).join(AutoriaCamara, AutoriaCamara.id_parlamentar == Parlamentar.id).group_by(Parlamentar.id)
-    
+
     senado_parl = select(
         Parlamentar.nome_eleitoral.label("nome"),
         Parlamentar.sigla_partido.label("partido"),
@@ -305,18 +319,20 @@ def obter_resumo(db: Session) -> dict:
         literal("Senado").label("casa"),
         func.count(func.distinct(AutoriaSenado.id_pl)).label("total")
     ).join(AutoriaSenado, AutoriaSenado.id_parlamentar == Parlamentar.id).group_by(Parlamentar.id)
-    
+
     query_parl = camara_parl.union_all(senado_parl).subquery()
     query_top_parl = select(
-        query_parl.c.nome, query_parl.c.partido, query_parl.c.uf, query_parl.c.sexo, query_parl.c.casa, func.sum(query_parl.c.total).label("total_propostas")
+        query_parl.c.nome, query_parl.c.partido, query_parl.c.uf, query_parl.c.sexo, query_parl.c.casa, func.sum(
+            query_parl.c.total).label("total_propostas")
     ).group_by(query_parl.c.nome, query_parl.c.partido, query_parl.c.uf, query_parl.c.sexo, query_parl.c.casa).order_by(func.sum(query_parl.c.total).desc()).limit(3)
-    
+
     parlamentares = []
     for row in db.execute(query_top_parl).all():
         cargo = "Deputado Federal" if row.casa == "Câmara" and row.sexo == "M" else "Deputada Federal" if row.casa == "Câmara" else "Senador" if row.sexo == "M" else "Senadora"
         nomes = row.nome.split()
-        iniciais = (nomes[0][0] + nomes[1][0]).upper() if len(nomes) > 1 else nomes[0][0:2].upper()
-        
+        iniciais = (nomes[0][0] + nomes[1][0]
+                    ).upper() if len(nomes) > 1 else nomes[0][0:2].upper()
+
         parlamentares.append({
             "nome": row.nome,
             "iniciais": iniciais,
@@ -324,7 +340,7 @@ def obter_resumo(db: Session) -> dict:
             "uf": row.uf,
             "total_propostas": row.total_propostas
         })
-        
+
     return {
         "tempo_medio_tramitacao": {
             "dias": dias_medios

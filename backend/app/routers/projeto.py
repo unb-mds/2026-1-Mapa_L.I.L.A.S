@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, and_, or_, cast, String, Integer, null, case
+from sqlalchemy import select, func, or_, cast, String, Integer, null, case
 from app.database import get_db
 from app.models import (
     PlCamara, PlSenado, Parlamentar, AutoriaCamara, AutoriaSenado,
@@ -255,7 +255,6 @@ def listar_projetos(
 
 @router.get("/{casa}/{numero}/{ano}")
 def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depends(get_db)):
-    from app.services.normalizer import normalizar_status_camara, normalizar_status_senado
     casa_low = casa.lower()
     
     if casa_low in ["camara", "câmara", "camara dos deputados", "câmara dos deputados"]:
