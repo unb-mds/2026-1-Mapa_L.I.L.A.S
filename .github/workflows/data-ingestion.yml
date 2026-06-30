@@ -35,6 +35,7 @@ jobs:
       - name: Run data ingestion (Incremental)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           cd backend
           python popular_banco.py --mode incremental
