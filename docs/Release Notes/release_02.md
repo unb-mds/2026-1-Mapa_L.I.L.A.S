@@ -11,13 +11,19 @@ Fechamos o escopo final do projeto integrando a raspagem de dados do legislativo
 ### Funcionalidades e Engenharia de Dados
 
 **Pipelines de Captura de Dados e PNL**
+
 * **Mapeamento por Palavras-Chave:** Desenvolvimento de pipelines para capturar projetos de lei na Câmara e no Senado de forma dinâmica, filtrando os termos do escopo.
+  
 * **Infraestrutura de Processamento de Linguagem Natural (PLN):** Criação de rotinas de processamento de texto e testes unitários para classificar e tratar as proposições capturadas.
+  
 * **Parsers e Mocking:** Implementação de lógica de prompts e parsers com tratamento de exceções, além de um modo Mock para simular os dados em ambiente de desenvolvimento.
 
 **📊 Frontend e Endpoints da API**
+
 * **Endpoints de Agregação:** Criação do endpoint `/api/graficos/resumo` para alimentar os gráficos do frontend.
+  
 * **Dashboards Visuais:** Telas de gráficos interativos (Pizza, Rosca, Barras e Mapa do Brasil por estado) puxando os dados reais da API.
+  
 * **Página de Detalhamento:** Unificação da tela de detalhes dos Projetos de Lei, exibindo ementa, autor, histórico de tramitação e o link do PDF original.
 
 ---
