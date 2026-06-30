@@ -9,6 +9,7 @@ Base URL: https://dadosabertos.camara.leg.br/api/v2
 """
 
 import logging
+from datetime import date, timedelta
 from typing import Any, Iterator, Optional
 import requests
 
@@ -28,6 +29,7 @@ SIGLAS_TIPO = ["PL", "PLP"]
 
 _cache_deputados = {}
 
+
 def _get(path: str, params: Optional[dict] = None) -> Optional[dict[str, Any]]:
     url = f"{BASE_URL}/{path.lstrip('/')}"
     try:
@@ -38,7 +40,6 @@ def _get(path: str, params: Optional[dict] = None) -> Optional[dict[str, Any]]:
         logger.warning("Câmara API indisponível [%s]: %s", url, exc)
         return None
 
-from datetime import date, timedelta
 
 def listar_proposicoes(
     sigla_tipo: str,
@@ -79,11 +80,13 @@ def listar_proposicoes(
             break
         pagina += 1
 
+
 def buscar_detalhe(id_proposicao: int) -> Optional[dict[str, Any]]:
     raw = _get(f"/proposicoes/{id_proposicao}")
     if not raw:
         return None
     return raw.get("dados")
+
 
 def buscar_autores(id_proposicao: int) -> list[dict[str, Any]]:
     raw = _get(f"/proposicoes/{id_proposicao}/autores")
@@ -91,21 +94,23 @@ def buscar_autores(id_proposicao: int) -> list[dict[str, Any]]:
         return []
     return raw.get("dados", [])
 
+
 def buscar_tramitacoes(id_proposicao: int) -> list[dict[str, Any]]:
     raw = _get(f"/proposicoes/{id_proposicao}/tramitacoes")
     if not raw:
         return []
     return raw.get("dados", [])
 
+
 def buscar_deputado(id_deputado: int) -> Optional[dict[str, Any]]:
     id_str = str(id_deputado)
     if id_str in _cache_deputados:
         return _cache_deputados[id_str]
-        
+
     raw = _get(f"/deputados/{id_str}")
     if not raw:
         return None
-        
+
     dados = raw.get("dados", {})
     _cache_deputados[id_str] = dados
     return dados

@@ -1,5 +1,4 @@
 import json
-import os
 from scripts.merge_reports import merge_reports
 
 def test_merge_reports_creates_history_if_not_exists(tmp_path):
