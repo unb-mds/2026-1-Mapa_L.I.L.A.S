@@ -22,7 +22,7 @@ def mapear_estagio_atual_senado(situacao: str) -> str:
     if situacao in ["RMSAN"]:
         return "sancao"
     if situacao in ["TNJR", "TNJRVETO"]:
-        return "transformado em normajuridica"
+        return "aprovado"
     if situacao in ["RJTDA", "PRJDA", "RTPA", "ARQVD", "ARQV_CD"]:
         return "rejeitado"
     return "apresentacao"  # Fallback
@@ -161,7 +161,7 @@ def listar_projetos(
     # Extrai exatamente 4 dígitos imediatamente após a barra: ex "PL 1029/2026 (Sub)" -> "2026"
     ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
 
-    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['siglaSituacaoAtual'].astext, String))
 
     status_senado = case(
         (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
@@ -343,7 +343,7 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             })
         historico.reverse()
         
-        situacao_atual = dados_raw.get("situacaoAtual")
+        situacao_atual = dados_raw.get("siglaSituacaoAtual")
         status_raw = situacao_atual.upper() if situacao_atual else None
         
         if status_raw in ["TNJR", "TNJRVETO"]:
@@ -364,7 +364,7 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             "autor_partido": autores_partidos[0] if autores_partidos else None,
             "autor_uf": autores_ufs[0] if autores_ufs else None,
             "ementa": pl.ementa,
-            "estagio_atual": mapear_estagio_atual_senado(dados_raw.get("situacaoAtual")),
+            "estagio_atual": mapear_estagio_atual_senado(dados_raw.get("siglaSituacaoAtual")),
             "url_pdf": dados_raw.get("documento", {}).get("url") if isinstance(dados_raw.get("documento"), dict) else None,
             "temas": extrair_temas(dados_raw.get("documento", {}).get("indexacao") if isinstance(dados_raw.get("documento"), dict) else None),
             "historico": historico
@@ -404,7 +404,7 @@ def obter_stats(db: Session = Depends(get_db)):
 
     numero_senado = func.substring(PlSenado.identificacao, '([0-9]+)/')
     ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
-    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['siglaSituacaoAtual'].astext, String))
 
     status_senado = case(
         (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
