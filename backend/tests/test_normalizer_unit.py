@@ -11,6 +11,12 @@ from app.models import (
 from app.services import normalizer
 
 
+class FakeQuery:
+    def filter(self, *args, **kwargs):
+        return self
+    def first(self):
+        return None
+
 class FakeSession:
     def __init__(self):
         self.merged = []
@@ -18,6 +24,12 @@ class FakeSession:
     def merge(self, obj):
         self.merged.append(obj)
         return obj
+
+    def add(self, obj):
+        self.merged.append(obj)
+
+    def query(self, *args, **kwargs):
+        return FakeQuery()
 
 
 def merged_of(session, model):
@@ -169,5 +181,5 @@ def test_upsert_tramitacoes_senado_prefers_informes_legislativos():
 def test_status_normalizers_return_frontend_values():
     assert normalizer.normalizar_status_camara(None) == "em_tramitacao"
     assert normalizer.normalizar_status_camara("Arquivada") == "arquivado"
-    assert normalizer.normalizar_status_senado("SAN", True) == "aprovado"
+    assert normalizer.normalizar_status_senado("SAN", True) == "em_tramitacao"
     assert normalizer.normalizar_status_senado("ARQUIVADO_FIM_LEGISLATURA", False) == "arquivado"

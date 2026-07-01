@@ -1,0 +1,22 @@
+[
+  {
+    "ementa": "Aumenta a pena para o crime de feminicídio quando praticado na frente de menores.",
+    "esperado": true
+  },
+  {
+    "ementa": "Altera a Lei Maria da Penha para agilizar medidas protetivas de urgência às vítimas de violência doméstica.",
+    "esperado": true
+  },
+  {
+    "ementa": "Dispõe sobre o combate à violência contra a mulher em ambientes esportivos.",
+    "esperado": true
+  },
+  {
+    "ementa": "Institui o dia nacional de combate à corrupção e desvios de recursos públicos.",
+    "esperado": false
+  },
+  {
+    "ementa": "Altera o código de trânsito brasileiro para aumentar multas por excesso de velocidade.",
+    "esperado": false
+  }
+]

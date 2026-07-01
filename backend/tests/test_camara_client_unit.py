@@ -1,4 +1,6 @@
+import pytest
 import requests
+from pydantic import ValidationError
 
 from app.services import camara_client
 
@@ -45,14 +47,14 @@ def test_listar_proposicoes_paginates_and_stops_without_next_link(mocker):
     def fake_get(path, params):
         calls.append((path, params.copy()))
         if params["pagina"] == 1:
-            return {"dados": [{"id": 1}], "links": [{"rel": "next"}]}
-        return {"dados": [{"id": 2}], "links": []}
+            return {"dados": [{"id": 1, "numero": 10, "ano": 2024, "siglaTipo": "PL"}], "links": [{"rel": "next"}]}
+        return {"dados": [{"id": 2, "numero": 11, "ano": 2024, "siglaTipo": "PL"}], "links": []}
 
     mocker.patch("app.services.camara_client._get", side_effect=fake_get)
 
     result = list(camara_client.listar_proposicoes("PL", "direitos da mulher", 2024))
 
-    assert result == [{"id": 1}, {"id": 2}]
+    assert result == [{"id": 1, "numero": 10, "ano": 2024, "siglaTipo": "PL"}, {"id": 2, "numero": 11, "ano": 2024, "siglaTipo": "PL"}]
     assert [params["pagina"] for _, params in calls] == [1, 2]
     assert all(params["siglaTipo"] == "PL" for _, params in calls)
     assert all(params["dataApresentacaoInicio"] == "2024-01-01" for _, params in calls)
@@ -63,7 +65,7 @@ def test_listar_proposicoes_sends_configured_keywords(mocker):
 
     def fake_get(path, params):
         captured_params.append(params.copy())
-        return {"dados": [{"id": 1}], "links": []}
+        return {"dados": [{"id": 1, "numero": 10, "ano": 2024, "siglaTipo": "PL"}], "links": []}
 
     mocker.patch("app.services.camara_client._get", side_effect=fake_get)
 
@@ -85,3 +87,15 @@ def test_buscar_deputado_uses_cache(mocker):
     assert first == {"id": 123, "nome": "Deputada Teste"}
     assert second == first
     get.assert_called_once_with("/deputados/123")
+
+
+
+def test_listar_proposicoes_invalid_schema_raises_error(mocker):
+    # Payload quebrando o contrato (faltam numero, ano, siglaTipo)
+    mocker.patch(
+        "app.services.camara_client._get", 
+        return_value={"dados": [{"id": 999, "ementa": "Pl incompleto"}], "links": []}
+    )
+
+    with pytest.raises(ValidationError):
+        list(camara_client.listar_proposicoes("PL", "teste"))

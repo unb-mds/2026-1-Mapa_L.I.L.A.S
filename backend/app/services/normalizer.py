@@ -422,6 +422,6 @@ def normalizar_status_senado(situacao_atual: Optional[str], tramitando: Optional
     situacao_atual = situacao_atual.upper()
     if situacao_atual in ("TNJR", "TNJRVETO"):
         return "aprovado"
-    if situacao_atual in ("ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"):
+    if situacao_atual in ("ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA", "ARQUIVADO_FIM_LEGISLATURA"):
         return "arquivado"
     return "em_tramitacao"
