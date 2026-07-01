@@ -58,3 +58,45 @@ def get_dynamic_keywords(seed_topics: List[str] = None) -> List[str]:
     except Exception as e:
         logger.error(f"Erro ao buscar palavras-chave do Gemini: {e}")
         return seed_topics
+
+def classificar_projeto(ementa: str) -> bool:
+    """
+    Chama a API do Gemini (ou mock) para classificar se a ementa de um projeto de lei
+    é focada no combate ao feminicídio ou violência doméstica contra a mulher.
+    Retorna True se for relevante, False caso contrário.
+    """
+    if not ementa:
+        return False
+        
+    use_mock = os.environ.get("USE_MOCK_IA", "false").lower() == "true"
+    if use_mock:
+        # Mock simula acerto para a palavra "feminicídio" ou "violência"
+        ementa_lower = ementa.lower()
+        return "feminicídio" in ementa_lower or "violência" in ementa_lower
+
+    if not genai:
+        logger.error("google-generativeai não está instalado.")
+        return False
+
+    try:
+        client = genai.Client(api_key=api_key)
+        prompt = (
+            f"Você é um classificador binário especializado em legislação brasileira. "
+            f"Analise a seguinte ementa de projeto de lei: '{ementa}'. "
+            f"Responda EXATAMENTE E APENAS com a palavra 'true' se o projeto trata diretamente "
+            f"sobre feminicídio ou violência doméstica contra a mulher. "
+            f"Responda 'false' caso contrário ou se for apenas tangencial. "
+            f"NÃO inclua nenhuma formatação ou texto extra."
+        )
+        
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
+        
+        content = response.text.strip().lower()
+        return content == "true"
+        
+    except Exception as e:
+        logger.error(f"Erro ao classificar projeto com Gemini: {e}")
+        return False
