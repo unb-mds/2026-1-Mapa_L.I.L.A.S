@@ -40,6 +40,7 @@ def test_coletar_camara_enriches_authors_and_commits(mocker):
     }
     mocker.patch.object(collector.camara_client, "SIGLAS_TIPO", ["PL"])
     mocker.patch.object(collector.camara_client, "PALAVRAS_CHAVE", ["mulher"])
+    mocker.patch("app.services.collector.get_dynamic_keywords", return_value=["mulher"])
     mocker.patch.object(
         collector.camara_client,
         "listar_proposicoes",
@@ -95,6 +96,7 @@ def test_coletar_senado_fetches_detail_and_commits(mocker):
     detalhe = {"autoria": "Senadora Teste"}
     mocker.patch.object(collector.senado_client, "SIGLAS_TIPO", ["PL"])
     mocker.patch.object(collector.senado_client, "PALAVRAS_CHAVE", ["mulher"])
+    mocker.patch("app.services.collector.get_dynamic_keywords", return_value=["mulher"])
     pesquisar = mocker.patch.object(
         collector.senado_client,
         "pesquisar_materias",
