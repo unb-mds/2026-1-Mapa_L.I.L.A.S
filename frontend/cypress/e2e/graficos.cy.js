@@ -1,22 +1,6 @@
 describe('Página de Gráficos', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/graficos/resumo', {
-      parlamentares_ativos: [
-        { 
-          nome: "Parlamentar Teste", 
-          iniciais: "PT",
-          uf: "SP",
-          descricao: "PT-SP",
-          total_propostas: 5 
-        }
-      ],
-      top_estados: [
-        { uf: "SP", estado: "São Paulo", total_pls: 10 }
-      ],
-      tempo_medio_tramitacao: {
-        dias: 120
-      }
-    }).as('getGraficos');
+    cy.intercept('GET', '**/api/graficos/resumo', { fixture: 'graficos_resumo.json' }).as('getGraficos');
     
     cy.visit('/graficos');
   });

@@ -1,0 +1,17 @@
+{
+  "parlamentares_ativos": [
+    { 
+      "nome": "Parlamentar Teste", 
+      "iniciais": "PT",
+      "uf": "SP",
+      "descricao": "PT-SP",
+      "total_propostas": 5 
+    }
+  ],
+  "top_estados": [
+    { "uf": "SP", "estado": "São Paulo", "total_pls": 10 }
+  ],
+  "tempo_medio_tramitacao": {
+    "dias": 120
+  }
+}
