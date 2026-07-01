@@ -6,6 +6,7 @@ from app.models import (
     PlCamara, PlSenado, Parlamentar, AutoriaCamara, AutoriaSenado,
     TramitacaoCamara, TramitacaoSenado
 )
+from app.cache import cache_stats, cache_filtros, cache_projetos
 import math
 import re  # <-- IMPORTANTE: Adicionado para usar regex na rota de filtros
 
@@ -22,7 +23,7 @@ def mapear_estagio_atual_senado(situacao: str) -> str:
     if situacao in ["RMSAN"]:
         return "sancao"
     if situacao in ["TNJR", "TNJRVETO"]:
-        return "transformado em normajuridica"
+        return "aprovado"
     if situacao in ["RJTDA", "PRJDA", "RTPA", "ARQVD", "ARQV_CD"]:
         return "rejeitado"
     return "apresentacao"  # Fallback
@@ -91,6 +92,14 @@ def listar_projetos(
     ano: int = None,
     ordenar: str = Query("recentes")
 ):
+    # Cache: apenas para page=1, per_page=10, sem filtros de conteúdo
+    _sem_filtros_conteudo = not keyword and not partido and not uf and not ano
+    _cachavel = _sem_filtros_conteudo and page == 1 and per_page in (6, 10)
+    if _cachavel:
+        cache_key = f"{ordenar}_{status or 'all'}_{per_page}"
+        if cache_key in cache_projetos:
+            return cache_projetos[cache_key]
+
     # 1. Subqueries para a última atualização
     subq_camara = (
         select(TramitacaoCamara.id_pl, func.max(TramitacaoCamara.data_tramitacao).label("ultima_atualizacao"))
@@ -161,7 +170,7 @@ def listar_projetos(
     # Extrai exatamente 4 dígitos imediatamente após a barra: ex "PL 1029/2026 (Sub)" -> "2026"
     ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
 
-    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['siglaSituacaoAtual'].astext, String))
 
     status_senado = case(
         (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
@@ -251,7 +260,131 @@ def listar_projetos(
             "ultima_atualizacao": row.ultima_atualizacao.strftime("%Y-%m-%d") if row.ultima_atualizacao else None
         })
 
-    return {"projetos": projetos, "total": total_items, "page": page, "per_page": per_page, "total_pages": math.ceil(total_items / per_page) if per_page else 1}
+    resultado = {"projetos": projetos, "total": total_items, "page": page, "per_page": per_page, "total_pages": math.ceil(total_items / per_page) if per_page else 1}
+
+    # Armazena no cache se for uma chamada cacheável
+    if _cachavel:
+        cache_projetos[cache_key] = resultado
+
+    return resultado
+
+@router.get("/stats")
+def obter_stats(db: Session = Depends(get_db)):
+    # Verifica cache antes de consultar o banco
+    if "stats" in cache_stats:
+        return cache_stats["stats"]
+
+    # Reutiliza a mesma lógica de deduplicação do listar_projetos
+    subq_camara = (
+        select(TramitacaoCamara.id_pl, func.max(TramitacaoCamara.data_tramitacao).label("ultima_atualizacao"))
+        .group_by(TramitacaoCamara.id_pl)
+        .subquery()
+    )
+    subq_senado = (
+        select(TramitacaoSenado.id_pl, func.max(TramitacaoSenado.data_tramitacao).label("ultima_atualizacao"))
+        .group_by(TramitacaoSenado.id_pl)
+        .subquery()
+    )
+
+    status_camara = case(
+        (PlCamara.descricao_situacao == "Transformado em Norma Jurídica", "aprovado"),
+        (PlCamara.descricao_situacao == "Arquivada", "arquivado"),
+        else_="em_tramitacao"
+    ).label("status_normalizado")
+
+    query_camara = (
+        select(
+            func.cast(PlCamara.numero, String).label("numero"),
+            func.cast(PlCamara.ano, String).label("ano"),
+            func.coalesce(subq_camara.c.ultima_atualizacao, PlCamara.updated_at).label("ultima_atualizacao"),
+            status_camara
+        )
+        .outerjoin(subq_camara, subq_camara.c.id_pl == PlCamara.id)
+    )
+
+    numero_senado = func.substring(PlSenado.identificacao, '([0-9]+)/')
+    ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
+    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['siglaSituacaoAtual'].astext, String))
+
+    status_senado = case(
+        (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
+        (or_(situacao_atual_senado.in_(["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]), situacao_atual_senado.is_(None), situacao_atual_senado == 'NULL', situacao_atual_senado == ''), "arquivado"),
+        else_="em_tramitacao"
+    ).label("status_normalizado")
+
+    query_senado = (
+        select(
+            func.cast(func.nullif(numero_senado, ''), String).label("numero"),
+            func.cast(func.nullif(ano_senado, ''), String).label("ano"),
+            func.coalesce(subq_senado.c.ultima_atualizacao, PlSenado.updated_at).label("ultima_atualizacao"),
+            status_senado
+        )
+        .outerjoin(subq_senado, subq_senado.c.id_pl == PlSenado.id)
+    )
+
+    union_subq = query_camara.union_all(query_senado).subquery()
+
+    rn_col = func.row_number().over(
+        partition_by=(union_subq.c.numero, union_subq.c.ano),
+        order_by=union_subq.c.ultima_atualizacao.desc().nullslast()
+    ).label('rn')
+
+    dedup_subq = select(union_subq, rn_col).subquery()
+    final_query = select(dedup_subq).where(dedup_subq.c.rn == 1).subquery()
+
+    total = db.execute(select(func.count()).select_from(final_query)).scalar()
+    em_tramitacao = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "em_tramitacao")).scalar()
+    aprovados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "aprovado")).scalar()
+    arquivados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "arquivado")).scalar()
+
+    resultado = {
+        "total": total,
+        "em_tramitacao": em_tramitacao,
+        "aprovados": aprovados,
+        "arquivados": arquivados,
+    }
+    cache_stats["stats"] = resultado
+    return resultado
+
+@router.get("/filtros")
+def listar_filtros(db: Session = Depends(get_db)):
+    # Verifica cache antes de consultar o banco
+    if "filtros" in cache_filtros:
+        return cache_filtros["filtros"]
+
+    partidos_query = db.query(Parlamentar.sigla_partido).filter(
+        Parlamentar.sigla_partido.isnot(None), 
+        Parlamentar.sigla_partido != ""
+    ).distinct().order_by(Parlamentar.sigla_partido).all()
+    
+    ufs_query = db.query(Parlamentar.sigla_uf).filter(
+        Parlamentar.sigla_uf.isnot(None), 
+        Parlamentar.sigla_uf != ""
+    ).distinct().order_by(Parlamentar.sigla_uf).all()
+    
+    anos_camara = db.query(PlCamara.ano).filter(PlCamara.ano.isnot(None)).distinct().all()
+    anos_set = {ano[0] for ano in anos_camara}
+    
+    identificacoes_senado = db.query(PlSenado.identificacao).filter(PlSenado.identificacao.isnot(None)).all()
+    
+    for id_senado in identificacoes_senado:
+        texto = id_senado[0] 
+        if texto and "/" in texto:
+            # EXTRAÇÃO ROBUSTA COM REGEX NO PYTHON
+            # Busca exatamente a barra seguida de 4 dígitos, ignorando o resto
+            match = re.search(r'/([0-9]{4})', texto)
+            if match:
+                anos_set.add(int(match.group(1)))
+                
+    anos_lista = sorted(list(anos_set))
+    
+    resultado = {
+        "partidos": [p[0] for p in partidos_query],
+        "ufs": [u[0] for u in ufs_query],
+        "anos": anos_lista
+    }
+    cache_filtros["filtros"] = resultado
+    return resultado
 
 @router.get("/{casa}/{numero}/{ano}")
 def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depends(get_db)):
@@ -343,7 +476,7 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             })
         historico.reverse()
         
-        situacao_atual = dados_raw.get("situacaoAtual")
+        situacao_atual = dados_raw.get("siglaSituacaoAtual")
         status_raw = situacao_atual.upper() if situacao_atual else None
         
         if status_raw in ["TNJR", "TNJRVETO"]:
@@ -364,116 +497,10 @@ def obter_projeto_detalhado(casa: str, numero: str, ano: int, db: Session = Depe
             "autor_partido": autores_partidos[0] if autores_partidos else None,
             "autor_uf": autores_ufs[0] if autores_ufs else None,
             "ementa": pl.ementa,
-            "estagio_atual": mapear_estagio_atual_senado(dados_raw.get("situacaoAtual")),
+            "estagio_atual": mapear_estagio_atual_senado(dados_raw.get("siglaSituacaoAtual")),
             "url_pdf": dados_raw.get("documento", {}).get("url") if isinstance(dados_raw.get("documento"), dict) else None,
             "temas": extrair_temas(dados_raw.get("documento", {}).get("indexacao") if isinstance(dados_raw.get("documento"), dict) else None),
             "historico": historico
         }
     else:
         raise HTTPException(status_code=400, detail="Casa legislativa inválida. Use 'camara' ou 'senado'.")
-    
-@router.get("/stats")
-def obter_stats(db: Session = Depends(get_db)):
-    # Reutiliza a mesma lógica de deduplicação do listar_projetos
-    subq_camara = (
-        select(TramitacaoCamara.id_pl, func.max(TramitacaoCamara.data_tramitacao).label("ultima_atualizacao"))
-        .group_by(TramitacaoCamara.id_pl)
-        .subquery()
-    )
-    subq_senado = (
-        select(TramitacaoSenado.id_pl, func.max(TramitacaoSenado.data_tramitacao).label("ultima_atualizacao"))
-        .group_by(TramitacaoSenado.id_pl)
-        .subquery()
-    )
-
-    status_camara = case(
-        (PlCamara.descricao_situacao == "Transformado em Norma Jurídica", "aprovado"),
-        (PlCamara.descricao_situacao == "Arquivada", "arquivado"),
-        else_="em_tramitacao"
-    ).label("status_normalizado")
-
-    query_camara = (
-        select(
-            func.cast(PlCamara.numero, String).label("numero"),
-            func.cast(PlCamara.ano, String).label("ano"),
-            func.coalesce(subq_camara.c.ultima_atualizacao, PlCamara.updated_at).label("ultima_atualizacao"),
-            status_camara
-        )
-        .outerjoin(subq_camara, subq_camara.c.id_pl == PlCamara.id)
-    )
-
-    numero_senado = func.substring(PlSenado.identificacao, '([0-9]+)/')
-    ano_senado = func.substring(PlSenado.identificacao, '/([0-9]{4})')
-    situacao_atual_senado = func.upper(func.cast(PlSenado.dados_raw['situacaoAtual'].astext, String))
-
-    status_senado = case(
-        (situacao_atual_senado.in_(["TNJR", "TNJRVETO"]), "aprovado"),
-        (or_(situacao_atual_senado.in_(["ARQVD", "ARQV_CD", "PRJDA", "RJTDA", "RTPA"]), situacao_atual_senado.is_(None), situacao_atual_senado == 'NULL', situacao_atual_senado == ''), "arquivado"),
-        else_="em_tramitacao"
-    ).label("status_normalizado")
-
-    query_senado = (
-        select(
-            func.cast(func.nullif(numero_senado, ''), String).label("numero"),
-            func.cast(func.nullif(ano_senado, ''), String).label("ano"),
-            func.coalesce(subq_senado.c.ultima_atualizacao, PlSenado.updated_at).label("ultima_atualizacao"),
-            status_senado
-        )
-        .outerjoin(subq_senado, subq_senado.c.id_pl == PlSenado.id)
-    )
-
-    union_subq = query_camara.union_all(query_senado).subquery()
-
-    rn_col = func.row_number().over(
-        partition_by=(union_subq.c.numero, union_subq.c.ano),
-        order_by=union_subq.c.ultima_atualizacao.desc().nullslast()
-    ).label('rn')
-
-    dedup_subq = select(union_subq, rn_col).subquery()
-    final_query = select(dedup_subq).where(dedup_subq.c.rn == 1).subquery()
-
-    total = db.execute(select(func.count()).select_from(final_query)).scalar()
-    em_tramitacao = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "em_tramitacao")).scalar()
-    aprovados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "aprovado")).scalar()
-    arquivados = db.execute(select(func.count()).select_from(final_query).where(final_query.c.status_normalizado == "arquivado")).scalar()
-
-    return {
-        "total": total,
-        "em_tramitacao": em_tramitacao,
-        "aprovados": aprovados,
-        "arquivados": arquivados,
-    }
-
-@router.get("/filtros")
-def listar_filtros(db: Session = Depends(get_db)):
-    partidos_query = db.query(Parlamentar.sigla_partido).filter(
-        Parlamentar.sigla_partido.isnot(None), 
-        Parlamentar.sigla_partido != ""
-    ).distinct().order_by(Parlamentar.sigla_partido).all()
-    
-    ufs_query = db.query(Parlamentar.sigla_uf).filter(
-        Parlamentar.sigla_uf.isnot(None), 
-        Parlamentar.sigla_uf != ""
-    ).distinct().order_by(Parlamentar.sigla_uf).all()
-    
-    anos_camara = db.query(PlCamara.ano).filter(PlCamara.ano.isnot(None)).distinct().all()
-    anos_set = {ano[0] for ano in anos_camara}
-    
-    identificacoes_senado = db.query(PlSenado.identificacao).filter(PlSenado.identificacao.isnot(None)).all()
-    
-    for id_senado in identificacoes_senado:
-        texto = id_senado[0] 
-        if texto and "/" in texto:
-            # EXTRAÇÃO ROBUSTA COM REGEX NO PYTHON
-            # Busca exatamente a barra seguida de 4 dígitos, ignorando o resto
-            match = re.search(r'/([0-9]{4})', texto)
-            if match:
-                anos_set.add(int(match.group(1)))
-                
-    anos_lista = sorted(list(anos_set))
-    
-    return {
-        "partidos": [p[0] for p in partidos_query],
-        "ufs": [u[0] for u in ufs_query],
-        "anos": anos_lista
-    }
