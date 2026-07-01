@@ -37,13 +37,13 @@ def test_nlp_accuracy_meets_threshold():
         if resultado == esperado:
             acertos += 1
         else:
-            print(f"\n[ERRO DE CLASSIFICAÇÃO]")
+            print("\n[ERRO DE CLASSIFICAÇÃO]")
             print(f"Ementa: {ementa}")
             print(f"Esperado: {esperado} | Recebido: {resultado}")
 
     accuracy = acertos / total
     
-    print(f"\n[MÉTRICAS DO NLP]")
+    print("\n[MÉTRICAS DO NLP]")
     print(f"Total: {total} | Acertos: {acertos} | Accuracy: {accuracy * 100:.2f}%")
     
     # Exige no mínimo 80% de acerto na semente inicial (ajustável pela SQUAD depois)

@@ -1,6 +1,5 @@
 import os
 import json
-import pytest
 from app.schemas.graficos import ResumoResponse
 from app.schemas.projeto import StatsResponse, ProjetosResponse, FiltrosResponse
 

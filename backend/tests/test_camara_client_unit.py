@@ -1,4 +1,6 @@
+import pytest
 import requests
+from pydantic import ValidationError
 
 from app.services import camara_client
 
@@ -87,8 +89,6 @@ def test_buscar_deputado_uses_cache(mocker):
     get.assert_called_once_with("/deputados/123")
 
 
-import pytest
-from pydantic import ValidationError
 
 def test_listar_proposicoes_invalid_schema_raises_error(mocker):
     # Payload quebrando o contrato (faltam numero, ano, siglaTipo)
