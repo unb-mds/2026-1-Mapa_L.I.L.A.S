@@ -849,6 +849,15 @@
         <a href="Arquitetura/Docker/" class="nav-item" onclick="setActive(this)">
           <span class="nav-icon">🐳</span> Docker
         </a>
+        <a href="Arquitetura/Deploy/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">☁️</span> Deploy (Vercel + Neon)
+        </a>
+        <a href="Arquitetura/Automacao_Ingestao/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🔄</span> Automação de Ingestão
+        </a>
+        <a href="Arquitetura/CI_CD/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🤖</span> CI/CD
+        </a>
       </div>
     </div>
 
@@ -894,35 +903,6 @@
         </a>
         <a href="Requisitos/Protótipo Alta Fidelidade/" class="nav-item" onclick="setActive(this)">
           <span class="nav-icon">🎨</span> Protótipo Alta Fidelidade
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-group-header open" onclick="toggleGroup(this)">
-        <span>ATAS Reunião</span>
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-      <div class="nav-sub" id="sub-atas">
-        <a href="ATAS Reunião/Ata26_03/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 01
-        </a>
-        <a href="ATAS Reunião/Ata30_03/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 02
-        </a>
-        <a href="ATAS Reunião/ATA reunião15_04/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 03
-        </a>
-        <a href="ATAS Reunião/Ata29_04/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 04
-        </a>
-        <a href="ATAS Reunião/Ata06_05/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 05
-        </a>
-        <a href="ATAS Reunião/Ata13_05/" class="nav-item" onclick="setActive(this)">
-          <span class="nav-icon">📄</span> Reunião 06
         </a>
       </div>
     </div>
@@ -982,6 +962,26 @@
 
     <div class="nav-section">
       <div class="nav-group-header open" onclick="toggleGroup(this)">
+        <span>Qualidade de Código</span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+      <div class="nav-sub" id="sub-qualidade">
+        <a href="Qualidade/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🔬</span> Análise SonarQube
+        </a>
+        <a href="Qualidade/Testes/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🧪</span> Cobertura de Testes
+        </a>
+        <a href="Qualidade/Linter/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">✨</span> Padronização (Linter)
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-group-header open" onclick="toggleGroup(this)">
         <span>Release Notes</span>
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -991,17 +991,56 @@
         <a href="Release Notes/release_01/" class="nav-item" onclick="setActive(this)">
           <span class="nav-icon">🚀</span> Release 01
         </a>
+        <a href="Release Notes/release_02/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">🚀</span> Release 02
+        </a>
+      </div>
+    </div>
+
+    <!-- Seções fechadas por padrão -->
+    <div class="nav-section">
+      <div class="nav-group-header" onclick="toggleGroup(this)">
+        <span>ATAS Reunião</span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+      <div class="nav-sub closed" id="sub-atas">
+        <a href="ATAS Reunião/Ata26_03/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 01
+        </a>
+        <a href="ATAS Reunião/Ata30_03/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 02
+        </a>
+        <a href="ATAS Reunião/ATA reunião15_04/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 03
+        </a>
+        <a href="ATAS Reunião/Ata29_04/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 04
+        </a>
+        <a href="ATAS Reunião/Ata06_05/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 05
+        </a>
+        <a href="ATAS Reunião/Ata13_05/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 06
+        </a>
+        <a href="ATAS Reunião/Ata20_05/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 07
+        </a>
+        <a href="ATAS Reunião/Ata27_05/" class="nav-item" onclick="setActive(this)">
+          <span class="nav-icon">📄</span> Reunião 08
+        </a>
       </div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-group-header open" onclick="toggleGroup(this)">
+      <div class="nav-group-header" onclick="toggleGroup(this)">
         <span>Estudos</span>
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </div>
-      <div class="nav-sub" id="sub-estudos">
+      <div class="nav-sub closed" id="sub-estudos">
 
         <div class="nav-group-header open" onclick="toggleGroup(this)" style="font-size:12px; padding:6px 10px;">
           <span>Sprint 00</span>
@@ -1037,6 +1076,18 @@
           <a href="Estudos/Sprint01/Docker/" class="nav-item" onclick="setActive(this)">
             <span class="nav-icon">📄</span> Docker
           </a>
+          <a href="Estudos/Sprint01/API_RESTful_Cheat_Sheet/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> API RESTful Cheat Sheet
+          </a>
+          <a href="Estudos/Sprint01/Estudo_MkDocs/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> MkDocs
+          </a>
+          <a href="Estudos/Sprint01/Estudo_de_Figma_Integracao_com_GitHub/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Figma + GitHub
+          </a>
+          <a href="Estudos/Sprint01/estudo_de_XP/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Extreme Programming (XP)
+          </a>
         </div>
 
         <div class="nav-group-header open" onclick="toggleGroup(this)" style="font-size:12px; padding:6px 10px;">
@@ -1051,6 +1102,12 @@
           </a>
           <a href="Estudos/Sprint02/prototipoFigma/" class="nav-item" onclick="setActive(this)">
             <span class="nav-icon">📄</span> Protótipo Figma
+          </a>
+          <a href="Estudos/Sprint02/EstudoFastApi/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> FastAPI
+          </a>
+          <a href="Estudos/Sprint02/Estudo_de_React_e_Tailwind_CSS/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> React e Tailwind CSS
           </a>
         </div>
 
@@ -1083,8 +1140,35 @@
           <a href="Estudos/Sprint04/StoryMap-figma/" class="nav-item" onclick="setActive(this)">
             <span class="nav-icon">📄</span> Story Map Figma
           </a>
-          <a href="Estudos/Sprint04/Wireframe/" class="nav-item" onclick="setActive(this)">
-            <span class="nav-icon">📄</span> Wireframe
+          <a href="Estudos/Sprint04/Implementacao_Dashboard/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Implementação de Dashboard
+          </a>
+        </div>
+
+        <div class="nav-group-header open" onclick="toggleGroup(this)" style="font-size:12px; padding:6px 10px;">
+          <span>Sprint 11</span>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+        <div class="nav-sub" id="sub-sprint11">
+          <a href="Estudos/Sprint11/Estudo_Implementacao_Dashboard/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Implementação Dashboard
+          </a>
+          <a href="Estudos/Sprint11/viabilidade_ranking_parlamentares/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Ranking Parlamentares
+          </a>
+        </div>
+
+        <div class="nav-group-header open" onclick="toggleGroup(this)" style="font-size:12px; padding:6px 10px;">
+          <span>Deploy</span>
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+        <div class="nav-sub" id="sub-deploy-estudo">
+          <a href="Estudos/Deploy/vercel/" class="nav-item" onclick="setActive(this)">
+            <span class="nav-icon">📄</span> Estudo Vercel
           </a>
         </div>
 
@@ -1098,6 +1182,7 @@
     <div style="margin-top:8px; color: var(--accent-bright); font-size:16px;">♥</div>
   </div>
 </aside>
+
 
 <!-- HEADER -->
 <header>
@@ -1470,7 +1555,11 @@ cd 2026-1-Mapa_L.I.L.A.S
 
   // init sub heights
   document.querySelectorAll('.nav-sub').forEach(sub => {
-    sub.style.maxHeight = sub.scrollHeight + 'px';
+    if (sub.classList.contains('closed')) {
+      sub.style.maxHeight = '0';
+    } else {
+      sub.style.maxHeight = sub.scrollHeight + 'px';
+    }
     sub.style.overflow = 'hidden';
     sub.style.transition = 'max-height .25s ease';
   });

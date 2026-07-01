@@ -40,6 +40,10 @@ nav:
       - Docker: Arquitetura/Docker.md
       - Decisões (ADRs): Arquitetura/ADRs.md
       - Qualidade e Operação: Arquitetura/Seguranca_Escalabilidade.md
+      - Deploy (Vercel e Neon): Arquitetura/Deploy.md
+      - Automação de Ingestão: Arquitetura/Automacao_Ingestao.md
+      - Integração e Entrega Contínuas (CI/CD): Arquitetura/CI_CD.md
+      - Arquitetura Técnica: Arquitetura/Arquitetura_Tecnica.md
 
   - Requisitos:
       - Visão geral: Requisitos/Visão de produto.md
@@ -73,14 +77,27 @@ nav:
           - Metodologias Ágeis: Estudos/Sprint00/_Metodologias.Ageis.md
       - Sprint 01:
           - Docker: Estudos/Sprint01/Docker.md
+          - API RESTful Cheat Sheet: Estudos/Sprint01/API_RESTful_Cheat_Sheet.md
+          - Estudo MkDocs: Estudos/Sprint01/Estudo_MkDocs.md
+          - Figma + Integração GitHub: Estudos/Sprint01/Estudo_de_Figma_Integracao_com_GitHub.md
+          - Extreme Programming (XP): Estudos/Sprint01/estudo_de_XP.md
       - Sprint 02:
           - PostgreSQL: Estudos/Sprint02/postgreSQL.md
           - Protótipo Figma: Estudos/Sprint02/prototipoFigma.md
+          - FastAPI: Estudos/Sprint02/EstudoFastApi.md
+          - React e Tailwind CSS: Estudos/Sprint02/Estudo_de_React_e_Tailwind_CSS.md
+      - Sprint 03:
+          - Persona: Estudos/Sprint03/persona.md
       - Sprint 04:
           - Estudo API Câmara/Senado: "Estudos/Sprint04/Estudo API da Câmara do Senado.md"
           - Pesquisa Legislativa: "Estudos/Sprint04/Pesquisa Legislativa - Monitoramento de PLs (API do Senado).md"
           - Story Map Figma: Estudos/Sprint04/StoryMap-figma.md
           - Implementação de Dashboard: Estudos/Sprint04/Implementacao_Dashboard.md
+      - Sprint 11:
+          - Implementação de Dashboard: Estudos/Sprint11/Estudo_Implementacao_Dashboard.md
+          - Viabilidade Ranking Parlamentares: Estudos/Sprint11/viabilidade_ranking_parlamentares.md
+      - Deploy:
+          - Estudo Vercel: Estudos/Deploy/vercel.md
 
   - Release Notes:
       - Release 01: "Release Notes/release_01.md"
@@ -92,8 +109,7 @@ nav:
   - Relatório de Ingestão:
       - Dashboard: ingestion/index.html
 
-  - NLP com AI:
-      - Integração NLP: "NLP com AI/ai_integration_nlp.md"
-
   - Qualidade de Código:
       - Análise SonarQube: Qualidade/index.md
+      - Cobertura de Testes: Qualidade/Testes.md
+      - Padronização (Linter): Qualidade/Linter.md

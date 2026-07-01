@@ -12,11 +12,11 @@ Fechamos o escopo final do projeto integrando a raspagem de dados do legislativo
 
 **Pipelines de Captura de Dados e PNL**
 * **Mapeamento por Palavras-Chave:** Desenvolvimento de pipelines para capturar projetos de lei na Câmara e no Senado de forma dinâmica, filtrando os termos do escopo.
-* **Infraestrutura de Processamento de Linguagem Natural (PLN):** Criação de rotinas de processamento de texto e testes unitários para classificar e tratar as proposições capturadas.
+* **[Infraestrutura de Processamento de Linguagem Natural (PLN)](../Arquitetura/Automacao_Ingestao.md):** Criação de rotinas de processamento de texto e testes unitários para classificar e tratar as proposições capturadas.
 * **Parsers e Mocking:** Implementação de lógica de prompts e parsers com tratamento de exceções, além de um modo Mock para simular os dados em ambiente de desenvolvimento.
 
 **Frontend e Endpoints da API**
-* **Endpoints de Agregação:** Criação do endpoint `/api/graficos/resumo` para alimentar os gráficos do frontend.
+* **Endpoints de Agregação:** Criação dos endpoints `/api/graficos/resumo`, `/api/projetos-de-lei/stats`, `/api/graficos/distribuicao` e `/api/projetos-de-lei/{casa}/{numero}/{ano}` para alimentar os gráficos e a busca do frontend.
 * **Dashboards Visuais:** Telas de gráficos interativos (Pizza, Rosca, Barras e Mapa do Brasil por estado) puxando os dados reais da API.
 * **Página de Detalhamento:** Unificação da tela de detalhes dos Projetos de Lei, exibindo ementa, autor, histórico de tramitação e o link do PDF original.
 
@@ -24,18 +24,18 @@ Fechamos o escopo final do projeto integrando a raspagem de dados do legislativo
 
 ## DevOps e Infraestrutura (CI/CD)
 
-* **Containers e Orquestração:** Dockerfiles e `docker-compose.yml` configurados para rodar a aplicação inteira (Front, Back e PostgreSQL) em paralelo.
-* **Automação da Ingestão de Dados:** Configuração de um cronograma via GitHub Actions para rodar o script de raspagem de dados de segunda a sexta-feira às 23:57 BRT.
-* **Testes Automatizados:** Implementação de testes de integração front-back rodando isolados dentro do ambiente Docker.
-* **GitHub Pages:** Deploy automatizado para atualizar o site da documentação (MkDocs) e o painel de métricas do Scrum a cada alteração na branch principal.
-* **Deploy em Produção (Vercel):** Lançamento oficial da plataforma na nuvem via Vercel, permitindo acesso público e instantâneo da sociedade ao buscador e dashboards.
-* **Workflows de Deploy Automático:** Implementação de esteiras de integração contínua específicas (`deploy-backend.yml` e `deploy-frontend.yml`), garantindo que qualquer nova alteração na branch principal seja compilada e implantada automaticamente em produção.
+* **[Containers e Orquestração](../Arquitetura/Docker.md):** Dockerfiles e `docker-compose.yml` configurados para rodar a aplicação inteira (Front, Back e PostgreSQL) em paralelo.
+* **[Automação da Ingestão de Dados](../Arquitetura/Automacao_Ingestao.md):** Configuração de um cronograma via GitHub Actions para rodar o script de raspagem de dados de segunda a sexta-feira às 23:57 BRT.
+* **[Testes Automatizados](../Qualidade/Testes.md):** Implementação de testes de integração front-back rodando isolados dentro do ambiente Docker.
+* **[GitHub Pages](https://unb-mds.github.io/2026-1-Mapa_L.I.L.A.S/):** Deploy automatizado para atualizar o site da documentação (MkDocs) e o painel de métricas do Scrum a cada alteração na branch principal.
+* **[Deploy em Produção (Vercel)](../Arquitetura/Deploy.md):** Lançamento oficial da plataforma na nuvem via Vercel, permitindo acesso público e instantâneo da sociedade ao buscador e dashboards.
+* **[Workflows de Deploy Automático](../Arquitetura/CI_CD.md):** Implementação de esteiras de integração contínua específicas (`deploy-backend.yml` e `deploy-frontend.yml`), garantindo que qualquer nova alteração na branch principal seja compilada e implantada automaticamente em produção. Com o suporte do **[Linter](../Qualidade/Linter.md)** bloqueando código fora do padrão.
 
 ---
 
 ## Indicadores de Qualidade de Código (SonarQube)
 
-Como parte dos critérios de validação, rodámos a ferramenta SonarQube para mapear a estrutura técnica sobre as 15 mil linhas de código geradas no projeto. Os resultados servem como mapeamento preventivo para futuras iterações do software:
+Como parte dos critérios de validação, rodámos a ferramenta [SonarQube](../Qualidade/index.md) para mapear a estrutura técnica sobre as 15 mil linhas de código geradas no projeto. Os resultados servem como mapeamento preventivo para futuras iterações do software:
 
 * **Manutenibilidade (Nota A):** O projeto atingiu a classificação máxima em legibilidade e organização. Os apontamentos de *Code Smells* referem-se a melhorias estéticas simples (como remoção de variáveis declaradas e não utilizadas), o que simplifica futuras evoluções do sistema.
 * **Confiabilidade e Segurança:** A ferramenta catalogou os pontos de atenção lógicos e estruturais padrão para o ecossistema FastAPI/React, a maioria associada à parametrização e ao isolamento de variáveis de configuração em ambiente de desenvolvimento local (`.env`). Isso gera um plano de ação claro para os ajustes necessários antes de um deploy em produção.
