@@ -91,3 +91,9 @@ nav:
 
   - Relatório de Ingestão:
       - Dashboard: ingestion/index.html
+
+  - NLP com AI:
+      - Integração NLP: "NLP com AI/ai_integration_nlp.md"
+
+  - Qualidade de Código:
+      - Análise SonarQube: Qualidade/index.md

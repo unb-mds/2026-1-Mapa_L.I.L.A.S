@@ -1,4 +1,7 @@
 # Mapa L.I.L.A.S - Mapa Legislativo Informativo de Leis de Acompanhamento Social
+
+**Acesse a plataforma rodando em produção:** [https://mapa-lilas.vercel.app/](https://mapa-lilas.vercel.app/)
+
 ---
 Buscador de projetos de lei sobre: feminicídio, violência doméstica e direitos da mulher.
 Plataforma para busca e acompanhamento de projetos de lei sobre feminicídio e visualização de gráficos sobre o assunto.
@@ -129,6 +132,12 @@ docker-compose up --build
 ---
 
 ##  Acessando a Aplicação
+
+### Em Produção (Deploy)
+
+*  **Plataforma:** [https://mapa-lilas.vercel.app/](https://mapa-lilas.vercel.app/)
+
+### Em Desenvolvimento Local
 
 Quando os containers estiverem rodando e o terminal indicar que os serviços iniciaram com sucesso, abra o navegador e acesse:
 

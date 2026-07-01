@@ -11,19 +11,13 @@ Fechamos o escopo final do projeto integrando a raspagem de dados do legislativo
 ### Funcionalidades e Engenharia de Dados
 
 **Pipelines de Captura de Dados e PNL**
-
 * **Mapeamento por Palavras-Chave:** Desenvolvimento de pipelines para capturar projetos de lei na Câmara e no Senado de forma dinâmica, filtrando os termos do escopo.
-  
 * **Infraestrutura de Processamento de Linguagem Natural (PLN):** Criação de rotinas de processamento de texto e testes unitários para classificar e tratar as proposições capturadas.
-  
 * **Parsers e Mocking:** Implementação de lógica de prompts e parsers com tratamento de exceções, além de um modo Mock para simular os dados em ambiente de desenvolvimento.
 
-**📊 Frontend e Endpoints da API**
-
+**Frontend e Endpoints da API**
 * **Endpoints de Agregação:** Criação do endpoint `/api/graficos/resumo` para alimentar os gráficos do frontend.
-  
 * **Dashboards Visuais:** Telas de gráficos interativos (Pizza, Rosca, Barras e Mapa do Brasil por estado) puxando os dados reais da API.
-  
 * **Página de Detalhamento:** Unificação da tela de detalhes dos Projetos de Lei, exibindo ementa, autor, histórico de tramitação e o link do PDF original.
 
 ---
@@ -34,6 +28,8 @@ Fechamos o escopo final do projeto integrando a raspagem de dados do legislativo
 * **Automação da Ingestão de Dados:** Configuração de um cronograma via GitHub Actions para rodar o script de raspagem de dados de segunda a sexta-feira às 23:57 BRT.
 * **Testes Automatizados:** Implementação de testes de integração front-back rodando isolados dentro do ambiente Docker.
 * **GitHub Pages:** Deploy automatizado para atualizar o site da documentação (MkDocs) e o painel de métricas do Scrum a cada alteração na branch principal.
+* **Deploy em Produção (Vercel):** Lançamento oficial da plataforma na nuvem via Vercel, permitindo acesso público e instantâneo da sociedade ao buscador e dashboards.
+* **Workflows de Deploy Automático:** Implementação de esteiras de integração contínua específicas (`deploy-backend.yml` e `deploy-frontend.yml`), garantindo que qualquer nova alteração na branch principal seja compilada e implantada automaticamente em produção.
 
 ---
 
@@ -52,7 +48,7 @@ Como parte dos critérios de validação, rodámos a ferramenta SonarQube para m
 * **Frontend:** React + Vite + TailwindCSS
 * **Backend:** Python + FastAPI + Módulos de PNL
 * **Banco de Dados:** PostgreSQL (armazenamento de dados brutos usando tipo JSONB)
-* **Infraestrutura / Qualidade:** Docker + GitHub Actions + MkDocs + SonarQube
+* **Infraestrutura / Qualidade:** Docker + GitHub Actions + MkDocs + SonarQube + Vercel
 
 ---
 
