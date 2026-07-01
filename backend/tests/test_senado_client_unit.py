@@ -93,3 +93,16 @@ def test_buscar_senador_uses_cache(mocker):
 
     assert first == second
     get.assert_called_once_with("/senador/9")
+
+import pytest
+from pydantic import ValidationError
+
+def test_pesquisar_materias_invalid_schema_raises_error(mocker):
+    # Payload sem id, codigoMateria ou identificacao
+    mocker.patch(
+        "app.services.senado_client._get",
+        return_value=[{"ementa": "PL sem id"}]
+    )
+
+    with pytest.raises(ValidationError):
+        senado_client.pesquisar_materias("feminicidio", "PL")

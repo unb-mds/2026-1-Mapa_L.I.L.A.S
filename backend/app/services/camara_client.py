@@ -72,7 +72,10 @@ def listar_proposicoes(
         if not dados:
             break
 
-        yield from dados
+        from app.schemas.external_api import CamaraProposicaoSchema
+        for item in dados:
+            CamaraProposicaoSchema.model_validate(item)
+            yield item
 
         links = raw.get("links", [])
         tem_proxima = any(lnk.get("rel") == "next" for lnk in links)

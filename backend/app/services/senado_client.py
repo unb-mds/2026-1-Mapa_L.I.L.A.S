@@ -58,15 +58,22 @@ def pesquisar_materias(
     if not raw_response:
         return []
 
+    from app.schemas.external_api import SenadoProposicaoSchema
+
     # O SEGREDO: com v=1, a API retorna uma LISTA direta, e não um DICIONÁRIO.
     if isinstance(raw_response, list):
+        for item in raw_response:
+            SenadoProposicaoSchema.model_validate(item)
         return raw_response
         
     # Fallback de segurança (caso a API mude de ideia e mande um dict)
     if isinstance(raw_response, dict):
         processos = raw_response.get("Processos", raw_response.get("ListaProcessos", []))
         if isinstance(processos, dict):
-            return [processos]
+            processos = [processos]
+            
+        for item in processos:
+            SenadoProposicaoSchema.model_validate(item)
         return processos
 
     return []
