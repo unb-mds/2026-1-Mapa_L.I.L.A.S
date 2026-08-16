@@ -1,12 +1,7 @@
 {
-  "generated_at": "2026-08-09T04:11:37Z",
+  "generated_at": "2026-08-16T03:40:48Z",
   "repository": "unb-mds/2026-1-Mapa_L.I.L.A.S",
   "issues_per_week": [
-    {
-      "week": "2026-W21",
-      "opened": 7,
-      "closed": 3
-    },
     {
       "week": "2026-W22",
       "opened": 19,
@@ -61,6 +56,11 @@
       "week": "2026-W32",
       "opened": 0,
       "closed": 0
+    },
+    {
+      "week": "2026-W33",
+      "opened": 0,
+      "closed": 0
     }
   ],
   "commit_message_histogram": [
@@ -70,11 +70,11 @@
     },
     {
       "range": "21-50",
-      "count": 135
+      "count": 137
     },
     {
       "range": "51-100",
-      "count": 105
+      "count": 94
     },
     {
       "range": "101-200",
@@ -86,10 +86,6 @@
     }
   ],
   "coauthors_per_week": [
-    {
-      "week": "2026-W21",
-      "count": 0
-    },
     {
       "week": "2026-W22",
       "count": 0
@@ -132,6 +128,10 @@
     },
     {
       "week": "2026-W32",
+      "count": 0
+    },
+    {
+      "week": "2026-W33",
       "count": 0
     }
   ],
@@ -218,6 +218,11 @@
     },
     {
       "day": 1,
+      "hour": 4,
+      "count": 1
+    },
+    {
+      "day": 1,
       "hour": 5,
       "count": 4
     },
@@ -293,6 +298,11 @@
     },
     {
       "day": 2,
+      "hour": 4,
+      "count": 1
+    },
+    {
+      "day": 2,
       "hour": 5,
       "count": 4
     },
@@ -318,11 +328,6 @@
     },
     {
       "day": 2,
-      "hour": 14,
-      "count": 1
-    },
-    {
-      "day": 2,
       "hour": 15,
       "count": 1
     },
@@ -333,22 +338,17 @@
     },
     {
       "day": 2,
-      "hour": 20,
-      "count": 2
-    },
-    {
-      "day": 2,
       "hour": 21,
-      "count": 2
+      "count": 1
     },
     {
       "day": 2,
       "hour": 22,
-      "count": 3
+      "count": 2
     },
     {
       "day": 3,
-      "hour": 1,
+      "hour": 4,
       "count": 1
     },
     {
@@ -375,16 +375,6 @@
       "day": 3,
       "hour": 15,
       "count": 3
-    },
-    {
-      "day": 3,
-      "hour": 17,
-      "count": 1
-    },
-    {
-      "day": 3,
-      "hour": 18,
-      "count": 1
     },
     {
       "day": 3,
@@ -419,7 +409,7 @@
     {
       "day": 4,
       "hour": 4,
-      "count": 1
+      "count": 2
     },
     {
       "day": 4,
@@ -449,7 +439,7 @@
     {
       "day": 4,
       "hour": 15,
-      "count": 2
+      "count": 1
     },
     {
       "day": 4,
@@ -474,6 +464,11 @@
     {
       "day": 5,
       "hour": 2,
+      "count": 1
+    },
+    {
+      "day": 5,
+      "hour": 3,
       "count": 1
     },
     {
@@ -523,13 +518,13 @@
     },
     {
       "day": 6,
-      "hour": 1,
-      "count": 2
+      "hour": 4,
+      "count": 1
     },
     {
       "day": 6,
       "hour": 5,
-      "count": 5
+      "count": 4
     },
     {
       "day": 6,
@@ -544,11 +539,6 @@
     {
       "day": 6,
       "hour": 8,
-      "count": 1
-    },
-    {
-      "day": 6,
-      "hour": 14,
       "count": 1
     },
     {
@@ -574,7 +564,7 @@
     {
       "day": 6,
       "hour": 21,
-      "count": 8
+      "count": 6
     },
     {
       "day": 6,
@@ -591,22 +581,22 @@
     {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
-      "commits": 79
+      "commits": 76
     },
     {
       "username": "github-actions[bot]",
       "name": "github-actions[bot]",
-      "commits": 65
+      "commits": 70
     },
     {
       "username": "schetinger",
       "name": "Rafael Schetinger",
-      "commits": 43
+      "commits": 37
     },
     {
       "username": "alice-mariano",
       "name": "alice mariano",
-      "commits": 24
+      "commits": 21
     },
     {
       "username": "devEduardoReis",
@@ -616,24 +606,24 @@
     {
       "username": "Alice-Moura-13",
       "name": "Alice-Moura-13",
-      "commits": 15
+      "commits": 14
     },
     {
       "username": "Lulu-souza",
       "name": "Lulu-souza",
-      "commits": 8
+      "commits": 7
     }
   ],
   "top_pr_authors": [
     {
-      "username": "alice-mariano",
-      "name": "alice mariano",
-      "prs_opened": 9
-    },
-    {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
       "prs_opened": 8
+    },
+    {
+      "username": "alice-mariano",
+      "name": "alice mariano",
+      "prs_opened": 7
     },
     {
       "username": "schetinger",
@@ -661,8 +651,8 @@
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
       "opened": 13,
-      "closed": 19,
-      "total": 32
+      "closed": 18,
+      "total": 31
     },
     {
       "username": "schetinger",
@@ -681,9 +671,9 @@
     {
       "username": "alice-mariano",
       "name": "alice mariano",
-      "opened": 10,
-      "closed": 9,
-      "total": 19
+      "opened": 7,
+      "closed": 7,
+      "total": 14
     },
     {
       "username": "Lulu-souza",
