@@ -1,12 +1,7 @@
 {
-  "generated_at": "2026-09-13T07:45:27Z",
+  "generated_at": "2026-09-20T08:00:30Z",
   "repository": "unb-mds/2026-1-Mapa_L.I.L.A.S",
   "issues_per_week": [
-    {
-      "week": "2026-W26",
-      "opened": 10,
-      "closed": 7
-    },
     {
       "week": "2026-W27",
       "opened": 13,
@@ -60,25 +55,30 @@
     {
       "week": "2026-W37",
       "opened": 0,
+      "closed": 1
+    },
+    {
+      "week": "2026-W38",
+      "opened": 0,
       "closed": 0
     }
   ],
   "commit_message_histogram": [
     {
       "range": "0-20",
-      "count": 5
+      "count": 3
     },
     {
       "range": "21-50",
-      "count": 101
+      "count": 78
     },
     {
       "range": "51-100",
-      "count": 49
+      "count": 30
     },
     {
       "range": "101-200",
-      "count": 3
+      "count": 0
     },
     {
       "range": "200+",
@@ -86,10 +86,6 @@
     }
   ],
   "coauthors_per_week": [
-    {
-      "week": "2026-W26",
-      "count": 0
-    },
     {
       "week": "2026-W27",
       "count": 0
@@ -133,14 +129,13 @@
     {
       "week": "2026-W37",
       "count": 0
+    },
+    {
+      "week": "2026-W38",
+      "count": 0
     }
   ],
   "commit_heatmap": [
-    {
-      "day": 0,
-      "hour": 15,
-      "count": 1
-    },
     {
       "day": 0,
       "hour": 16,
@@ -148,33 +143,13 @@
     },
     {
       "day": 0,
-      "hour": 17,
-      "count": 1
-    },
-    {
-      "day": 0,
-      "hour": 18,
-      "count": 1
-    },
-    {
-      "day": 0,
-      "hour": 21,
-      "count": 2
-    },
-    {
-      "day": 0,
-      "hour": 22,
-      "count": 2
-    },
-    {
-      "day": 0,
       "hour": 23,
-      "count": 3
+      "count": 1
     },
     {
       "day": 1,
       "hour": 0,
-      "count": 8
+      "count": 6
     },
     {
       "day": 1,
@@ -199,7 +174,7 @@
     {
       "day": 1,
       "hour": 6,
-      "count": 3
+      "count": 2
     },
     {
       "day": 1,
@@ -209,7 +184,7 @@
     {
       "day": 1,
       "hour": 8,
-      "count": 1
+      "count": 2
     },
     {
       "day": 1,
@@ -234,7 +209,7 @@
     {
       "day": 2,
       "hour": 1,
-      "count": 3
+      "count": 2
     },
     {
       "day": 2,
@@ -259,12 +234,12 @@
     {
       "day": 2,
       "hour": 6,
-      "count": 2
+      "count": 1
     },
     {
       "day": 2,
       "hour": 7,
-      "count": 3
+      "count": 4
     },
     {
       "day": 2,
@@ -289,7 +264,12 @@
     {
       "day": 3,
       "hour": 6,
-      "count": 3
+      "count": 2
+    },
+    {
+      "day": 3,
+      "hour": 8,
+      "count": 1
     },
     {
       "day": 3,
@@ -297,31 +277,6 @@
       "count": 1
     },
     {
-      "day": 3,
-      "hour": 15,
-      "count": 3
-    },
-    {
-      "day": 3,
-      "hour": 22,
-      "count": 3
-    },
-    {
-      "day": 3,
-      "hour": 23,
-      "count": 4
-    },
-    {
-      "day": 4,
-      "hour": 0,
-      "count": 1
-    },
-    {
-      "day": 4,
-      "hour": 1,
-      "count": 5
-    },
-    {
       "day": 4,
       "hour": 3,
       "count": 1
@@ -344,17 +299,7 @@
     {
       "day": 4,
       "hour": 7,
-      "count": 2
-    },
-    {
-      "day": 4,
-      "hour": 11,
-      "count": 4
-    },
-    {
-      "day": 4,
-      "hour": 12,
-      "count": 4
+      "count": 3
     },
     {
       "day": 4,
@@ -362,21 +307,6 @@
       "count": 1
     },
     {
-      "day": 4,
-      "hour": 19,
-      "count": 2
-    },
-    {
-      "day": 5,
-      "hour": 1,
-      "count": 2
-    },
-    {
-      "day": 5,
-      "hour": 2,
-      "count": 1
-    },
-    {
       "day": 5,
       "hour": 3,
       "count": 2
@@ -399,7 +329,7 @@
     {
       "day": 5,
       "hour": 7,
-      "count": 1
+      "count": 2
     },
     {
       "day": 5,
@@ -407,26 +337,6 @@
       "count": 1
     },
     {
-      "day": 5,
-      "hour": 13,
-      "count": 1
-    },
-    {
-      "day": 5,
-      "hour": 14,
-      "count": 2
-    },
-    {
-      "day": 5,
-      "hour": 22,
-      "count": 3
-    },
-    {
-      "day": 5,
-      "hour": 23,
-      "count": 2
-    },
-    {
       "day": 6,
       "hour": 3,
       "count": 2
@@ -444,12 +354,12 @@
     {
       "day": 6,
       "hour": 6,
-      "count": 2
+      "count": 1
     },
     {
       "day": 6,
       "hour": 7,
-      "count": 1
+      "count": 2
     },
     {
       "day": 6,
@@ -461,22 +371,12 @@
     {
       "username": "github-actions[bot]",
       "name": "github-actions[bot]",
-      "commits": 67
+      "commits": 68
     },
     {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
-      "commits": 46
-    },
-    {
-      "username": "schetinger",
-      "name": "Rafael Schetinger",
-      "commits": 18
-    },
-    {
-      "username": "alice-mariano",
-      "name": "alice mariano",
-      "commits": 12
+      "commits": 21
     },
     {
       "username": "Alice-Moura-13",
@@ -484,64 +384,64 @@
       "commits": 9
     },
     {
-      "username": "Lulu-souza",
-      "name": "Lulu-souza",
-      "commits": 4
+      "username": "schetinger",
+      "name": "Rafael Schetinger",
+      "commits": 7
+    },
+    {
+      "username": "alice-mariano",
+      "name": "alice mariano",
+      "commits": 5
     },
     {
       "username": "devEduardoReis",
       "name": "devEduardoReis",
-      "commits": 2
+      "commits": 1
     }
   ],
   "top_pr_authors": [
     {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
-      "prs_opened": 5
-    },
-    {
-      "username": "alice-mariano",
-      "name": "alice mariano",
-      "prs_opened": 5
+      "prs_opened": 2
     },
     {
       "username": "schetinger",
       "name": "Rafael Schetinger",
-      "prs_opened": 3
+      "prs_opened": 2
     },
     {
-      "username": "Lulu-souza",
-      "name": "Lulu-souza",
-      "prs_opened": 3
+      "username": "alice-mariano",
+      "name": "alice mariano",
+      "prs_opened": 2
     },
     {
       "username": "devEduardoReis",
       "name": "devEduardoReis",
-      "prs_opened": 2
+      "prs_opened": 1
     }
   ],
   "top_issue_contributors": [
     {
       "username": "RenanSantoss21",
       "name": "RENAN SANTOS DE OLIVEIRA SÁ",
-      "opened": 13,
-      "closed": 5,
-      "total": 18
+      "opened": 8,
+      "closed": 3,
+      "total": 11
     },
     {
       "username": "alice-mariano",
       "name": "alice mariano",
-      "opened": 5,
-      "closed": 6,
-      "total": 11
+      "opened": 2,
+      "closed": 2,
+      "total": 4
     },
     {
       "username": "schetinger",
       "name": "Rafael Schetinger",
-      "opened": 2,
+      "opened": 1,
       "closed": 1,
-      "total": 3
+      "total": 2
     },
     {
       "username": "Alice-Moura-13",
@@ -549,13 +449,6 @@
       "opened": 2,
       "closed": 0,
       "total": 2
-    },
-    {
-      "username": "Lulu-souza",
-      "name": "Lulu-souza",
-      "opened": 1,
-      "closed": 0,
-      "total": 1
     }
   ]
 }
