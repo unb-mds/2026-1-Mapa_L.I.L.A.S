@@ -1,12 +1,7 @@
 {
-  "generated_at": "2026-09-27T08:40:20Z",
+  "generated_at": "2026-10-04T08:55:56Z",
   "repository": "unb-mds/2026-1-Mapa_L.I.L.A.S",
   "issues_per_week": [
-    {
-      "week": "2026-W28",
-      "opened": 0,
-      "closed": 0
-    },
     {
       "week": "2026-W29",
       "opened": 0,
@@ -61,6 +56,11 @@
       "week": "2026-W39",
       "opened": 0,
       "closed": 0
+    },
+    {
+      "week": "2026-W40",
+      "opened": 0,
+      "closed": 0
     }
   ],
   "commit_message_histogram": [
@@ -86,10 +86,6 @@
     }
   ],
   "coauthors_per_week": [
-    {
-      "week": "2026-W28",
-      "count": 0
-    },
     {
       "week": "2026-W29",
       "count": 0
@@ -133,6 +129,10 @@
     {
       "week": "2026-W39",
       "count": 0
+    },
+    {
+      "week": "2026-W40",
+      "count": 0
     }
   ],
   "commit_heatmap": [
@@ -153,11 +153,6 @@
     },
     {
       "day": 1,
-      "hour": 6,
-      "count": 1
-    },
-    {
-      "day": 1,
       "hour": 7,
       "count": 1
     },
@@ -165,6 +160,11 @@
       "day": 1,
       "hour": 8,
       "count": 3
+    },
+    {
+      "day": 1,
+      "hour": 9,
+      "count": 1
     },
     {
       "day": 2,
@@ -183,17 +183,17 @@
     },
     {
       "day": 2,
-      "hour": 6,
-      "count": 1
-    },
-    {
-      "day": 2,
       "hour": 7,
       "count": 3
     },
     {
       "day": 2,
       "hour": 8,
+      "count": 1
+    },
+    {
+      "day": 2,
+      "hour": 9,
       "count": 1
     },
     {
@@ -213,13 +213,13 @@
     },
     {
       "day": 3,
-      "hour": 6,
-      "count": 1
+      "hour": 8,
+      "count": 2
     },
     {
       "day": 3,
-      "hour": 8,
-      "count": 2
+      "hour": 9,
+      "count": 1
     },
     {
       "day": 3,
@@ -243,17 +243,17 @@
     },
     {
       "day": 4,
-      "hour": 6,
-      "count": 1
-    },
-    {
-      "day": 4,
       "hour": 7,
       "count": 3
     },
     {
       "day": 4,
       "hour": 8,
+      "count": 1
+    },
+    {
+      "day": 4,
+      "hour": 9,
       "count": 1
     },
     {
@@ -274,7 +274,7 @@
     {
       "day": 5,
       "hour": 5,
-      "count": 4
+      "count": 3
     },
     {
       "day": 5,
@@ -284,7 +284,7 @@
     {
       "day": 5,
       "hour": 8,
-      "count": 1
+      "count": 2
     },
     {
       "day": 5,
@@ -304,7 +304,7 @@
     {
       "day": 6,
       "hour": 5,
-      "count": 4
+      "count": 3
     },
     {
       "day": 6,
@@ -314,7 +314,7 @@
     {
       "day": 6,
       "hour": 8,
-      "count": 2
+      "count": 3
     }
   ],
   "top_committers": [
