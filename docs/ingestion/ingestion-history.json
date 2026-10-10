@@ -1,6 +1,17 @@
 {
-  "generated_at": "2026-10-09T09:42:51Z",
+  "generated_at": "2026-10-10T09:08:52Z",
   "runs": [
+    {
+      "mode": "incremental",
+      "started_at": "2026-10-10T09:08:15Z",
+      "finished_at": "2026-10-10T09:08:51Z",
+      "duration_seconds": 36,
+      "camara_count": 0,
+      "senado_count": 1,
+      "total_count": 1,
+      "errors": [],
+      "status": "success"
+    },
     {
       "mode": "incremental",
       "started_at": "2026-10-09T09:41:42Z",
