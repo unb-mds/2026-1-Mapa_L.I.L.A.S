@@ -1,6 +1,17 @@
 {
-  "generated_at": "2026-10-27T08:39:14Z",
+  "generated_at": "2026-10-28T09:17:43Z",
   "runs": [
+    {
+      "mode": "incremental",
+      "started_at": "2026-10-28T09:02:08Z",
+      "finished_at": "2026-10-28T09:17:43Z",
+      "duration_seconds": 935,
+      "camara_count": 177,
+      "senado_count": 3,
+      "total_count": 180,
+      "errors": [],
+      "status": "success"
+    },
     {
       "mode": "incremental",
       "started_at": "2026-10-27T08:25:20Z",
@@ -977,17 +988,6 @@
       "camara_count": 3315,
       "senado_count": 290,
       "total_count": 3605,
-      "errors": [],
-      "status": "success"
-    },
-    {
-      "mode": "incremental",
-      "started_at": "2026-06-18T07:22:22Z",
-      "finished_at": "2026-06-18T07:30:20Z",
-      "duration_seconds": 477,
-      "camara_count": 96,
-      "senado_count": 4,
-      "total_count": 100,
       "errors": [],
       "status": "success"
     }
