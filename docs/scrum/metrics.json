@@ -1,17 +1,7 @@
 {
-  "generated_at": "2026-11-01T09:52:30Z",
+  "generated_at": "2026-11-15T10:05:14Z",
   "repository": "unb-mds/2026-1-Mapa_L.I.L.A.S",
   "issues_per_week": [
-    {
-      "week": "2026-W33",
-      "opened": 0,
-      "closed": 0
-    },
-    {
-      "week": "2026-W34",
-      "opened": 0,
-      "closed": 0
-    },
     {
       "week": "2026-W35",
       "opened": 0,
@@ -61,6 +51,16 @@
       "week": "2026-W44",
       "opened": 0,
       "closed": 0
+    },
+    {
+      "week": "2026-W45",
+      "opened": 0,
+      "closed": 0
+    },
+    {
+      "week": "2026-W46",
+      "opened": 0,
+      "closed": 0
     }
   ],
   "commit_message_histogram": [
@@ -70,7 +70,7 @@
     },
     {
       "range": "21-50",
-      "count": 67
+      "count": 65
     },
     {
       "range": "51-100",
@@ -86,14 +86,6 @@
     }
   ],
   "coauthors_per_week": [
-    {
-      "week": "2026-W33",
-      "count": 0
-    },
-    {
-      "week": "2026-W34",
-      "count": 0
-    },
     {
       "week": "2026-W35",
       "count": 0
@@ -133,17 +125,20 @@
     {
       "week": "2026-W44",
       "count": 0
+    },
+    {
+      "week": "2026-W45",
+      "count": 0
+    },
+    {
+      "week": "2026-W46",
+      "count": 0
     }
   ],
   "commit_heatmap": [
     {
       "day": 1,
       "hour": 3,
-      "count": 2
-    },
-    {
-      "day": 1,
-      "hour": 4,
       "count": 1
     },
     {
@@ -162,39 +157,34 @@
       "count": 3
     },
     {
-      "day": 2,
-      "hour": 3,
+      "day": 1,
+      "hour": 10,
       "count": 2
     },
     {
       "day": 2,
-      "hour": 4,
-      "count": 1
-    },
-    {
-      "day": 2,
-      "hour": 7,
-      "count": 3
-    },
-    {
-      "day": 2,
-      "hour": 8,
-      "count": 3
-    },
-    {
-      "day": 2,
-      "hour": 9,
-      "count": 3
-    },
-    {
-      "day": 3,
       "hour": 3,
       "count": 1
     },
     {
-      "day": 3,
-      "hour": 4,
-      "count": 1
+      "day": 2,
+      "hour": 7,
+      "count": 3
+    },
+    {
+      "day": 2,
+      "hour": 8,
+      "count": 3
+    },
+    {
+      "day": 2,
+      "hour": 9,
+      "count": 3
+    },
+    {
+      "day": 2,
+      "hour": 10,
+      "count": 2
     },
     {
       "day": 3,
@@ -210,6 +200,11 @@
       "day": 3,
       "hour": 9,
       "count": 3
+    },
+    {
+      "day": 3,
+      "hour": 10,
+      "count": 2
     },
     {
       "day": 3,
@@ -218,16 +213,6 @@
     },
     {
       "day": 4,
-      "hour": 3,
-      "count": 1
-    },
-    {
-      "day": 4,
-      "hour": 4,
-      "count": 1
-    },
-    {
-      "day": 4,
       "hour": 7,
       "count": 4
     },
@@ -243,16 +228,16 @@
     },
     {
       "day": 4,
+      "hour": 10,
+      "count": 2
+    },
+    {
+      "day": 4,
       "hour": 14,
       "count": 1
     },
     {
       "day": 5,
-      "hour": 3,
-      "count": 2
-    },
-    {
-      "day": 5,
       "hour": 7,
       "count": 4
     },
@@ -264,12 +249,7 @@
     {
       "day": 5,
       "hour": 9,
-      "count": 2
-    },
-    {
-      "day": 6,
-      "hour": 3,
-      "count": 2
+      "count": 3
     },
     {
       "day": 6,
@@ -284,14 +264,14 @@
     {
       "day": 6,
       "hour": 9,
-      "count": 1
+      "count": 2
     }
   ],
   "top_committers": [
     {
       "username": "github-actions[bot]",
       "name": "github-actions[bot]",
-      "commits": 67
+      "commits": 65
     }
   ],
   "top_pr_authors": [],
